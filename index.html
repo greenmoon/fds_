@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joybien MQTT WebSocket Example 59.124.7.99:8080</title>
+    <title>Joybien Technologies MQTT WebSocket on 59.124.7.99:8080</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
         #room-container {
@@ -27,7 +27,7 @@
     </style>
 </head>
 <body>
-    <h1>Joybien MQTT WebSocket Example 59.124.7.99:8080</h1>
+    <h1>Joybien Technologies MQTT WebSocket on 59.124.7.99:8080</h1>
     
     <div>
         <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
@@ -40,7 +40,7 @@
 
     <h2>Room Layout</h2>
     <div id="room-container">
-        <img id="room-layout" src="../jb_room_layout_321x251.jpg" alt="Room Layout">
+        <img id="room-layout" src="./assets/jb_room_layout_321x251.jpg" alt="Room Layout">
     </div>
 
     <div>
@@ -122,7 +122,7 @@
         // Function to plot points on the room layout
         function plotPoints(points) {
             const container = document.getElementById('room-container');
-            container.innerHTML = '<img id="room-layout" src="../jb_room_layout_321x251.jpg" alt="Room Layout">';
+            container.innerHTML = '<img id="room-layout" src="./assets/jb_room_layout_321x251.jpg" alt="Room Layout">';
             
             points.forEach((point) => {
                 let [x, y] = point;
