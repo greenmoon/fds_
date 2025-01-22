@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JB MQTT WebSocket Example</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+    <h1>JB MQTT WebSocket Example</h1>
+    
+    <div>
+        <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
+        <input type="text" id="topic" placeholder="Enter Topic" value="fds">
+        <input type="text" id="message" placeholder="Enter Message" value="JB> ">
+        <button onclick="publishMessage()">Publish</button>
+    </div>
+
+    <div>
+        <h2>Received Messages:</h2>
+        <ul id="messages"></ul>
+    </div>
+
+    <script>
+        // MQTT Broker Configuration
+        const brokerUrl = 'ws://192.168.0.47:8080';  // Change 'localhost' to your broker's IP
+        const options = {
+            clientId: 'mqtt_client_' + Math.random().toString(16).substr(2, 8),  // Generate a unique client ID
+            clean: true,  // Clean session
+            connectTimeout: 4000,  // Timeout period
+        };
+
+        let messageCounter = 1;  // Initialize counter for messages
+
+        // Connect to the MQTT broker via WebSockets
+        const client = mqtt.connect(brokerUrl, options);
+
+        // Handle connection events
+        client.on('connect', () => {
+            console.log('Connected to MQTT broker via WebSocket');
+            document.getElementById('status').innerText = 'Connected';
+            client.subscribe('fds', (err) => {
+                if (!err) {
+                    console.log('Subscribed to fds');
+                } else {
+                    console.error('Subscription error:', err);
+                }
+            });
+
+            // Start periodic message publishing every 30 seconds
+            setInterval(publishDateTimeMessage, 30000);
+        });
+
+        // Handle incoming messages
+        client.on('message', (topic, message) => {
+            console.log(`Received message: ${message.toString()} on topic: ${topic}`);
+            const messageList = document.getElementById('messages');
+            const listItem = document.createElement('li');
+            listItem.textContent = `Topic: ${topic}, Message: ${message.toString()}`;
+            messageList.appendChild(listItem);
+        });
+
+        // Handle errors
+        client.on('error', (err) => {
+            console.error('Connection error:', err);
+            document.getElementById('status').innerText = 'Connection Error';
+        });
+
+        // Publish a manual message to the broker
+        function publishMessage() {
+            const topic = document.getElementById('topic').value;
+            const messageBase = document.getElementById('message').value;
+
+            if (topic && messageBase) {
+                const messageToSend = `${messageBase} ${messageCounter++}`;
+                client.publish(topic, messageToSend, (err) => {
+                    if (err) {
+                        console.error('Publish error:', err);
+                    } else {
+                        console.log(`Message "${messageToSend}" published to topic "${topic}"`);
+                    }
+                });
+            } else {
+                alert('Please enter both topic and message.');
+            }
+        }
+
+		// Publish periodic date-time message with UTC+8 adjustment
+		function publishDateTimeMessage() {
+			const topic = document.getElementById('topic').value;
+			const now = new Date();
+
+			// Convert UTC time to UTC+8 by adding 8 hours (8 * 60 * 60 * 1000 ms)
+			now.setHours(now.getHours() + 8);
+
+			// Format date-time as 'YYYY-MM-DD HH:MM:SS'
+			const formattedDateTime = now.toISOString().slice(0, 19).replace('T', ' ');
+
+			client.publish(topic, `Date-Time (UTC+8): ${formattedDateTime}`, (err) => {
+				if (err) {
+					console.error('Publish error:', err);
+				} else {
+					console.log(`Periodic message published: Date-Time (UTC+8): ${formattedDateTime}`);
+				}
+			});
+		}
+
+
+        // Handle disconnection
+        client.on('close', () => {
+            console.log('Disconnected from MQTT broker');
+            document.getElementById('status').innerText = 'Disconnected';
+        });
+    </script>
+</body>
+</html>
