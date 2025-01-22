@@ -3,17 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JB MQTT WebSocket Example</title>
+    <title>Joybien MQTT WebSocket Example 59.124.7.99:8080</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        #room-container {
+            position: relative;
+            width: 321px;
+            height: 251px;
+            border: 1px solid #ccc;
+        }
+        #room-layout {
+            width: 100%;
+            height: 100%;
+        }
+        .point {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
 </head>
 <body>
-    <h1>JB MQTT WebSocket Example</h1>
+    <h1>Joybien MQTT WebSocket Example 59.124.7.99:8080</h1>
     
     <div>
         <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
         <input type="text" id="topic" placeholder="Enter Topic" value="fds">
-        <input type="text" id="message" placeholder="Enter Message" value="JB> ">
+        <input type="text" id="message" placeholder="Enter Message" 
+               value='{"num": 3,"points": [[10, 10], [150, 100], [310, 240]]}'>
         <button onclick="publishMessage()">Publish</button>
+        <button onclick="jb_simul_target_moving()">Simulate Movement</button>
+    </div>
+
+    <h2>Room Layout</h2>
+    <div id="room-container">
+        <img id="room-layout" src="../jb_room_layout_321x251.jpg" alt="Room Layout">
     </div>
 
     <div>
@@ -23,7 +50,10 @@
 
     <script>
         // MQTT Broker Configuration
-        const brokerUrl = 'ws://192.168.0.47:8080';  // Change 'localhost' to your broker's IP
+        const brokerUrl = 'ws://59.124.7.99:8080';  // OK! fixed ip, Change 'localhost' to your broker's IP
+        //const brokerUrl = 'ws://192.168.0.47:8080';  // local ip 192.168.0.47, Change 'localhost' to your broker's IP
+        
+        
         const options = {
             clientId: 'mqtt_client_' + Math.random().toString(16).substr(2, 8),  // Generate a unique client ID
             clean: true,  // Clean session
@@ -36,6 +66,24 @@
         const client = mqtt.connect(brokerUrl, options);
 
         // Handle connection events
+        // Automatically start the walking simulation once connected to MQTT
+		client.on('connect', () => {
+			console.log('Connected to MQTT broker via WebSocket');
+			document.getElementById('status').innerText = 'Connected';
+
+			client.subscribe('fds', (err) => {
+				if (!err) {
+					console.log('Subscribed to fds');
+				} else {
+					console.error('Subscription error:', err);
+				}
+			});
+
+            setInterval(publishDateTimeMessage, 30000);
+			jb_simul_target_moving();  // Start the infinite simulation automatically
+		});
+		
+		<!--
         client.on('connect', () => {
             console.log('Connected to MQTT broker via WebSocket');
             document.getElementById('status').innerText = 'Connected';
@@ -49,8 +97,10 @@
 
             // Start periodic message publishing every 30 seconds
             setInterval(publishDateTimeMessage, 30000);
+			jb_simul_target_moving();  // Start the infinite simulation automatically
         });
-
+		-->
+		
         // Handle incoming messages
         client.on('message', (topic, message) => {
             console.log(`Received message: ${message.toString()} on topic: ${topic}`);
@@ -58,13 +108,78 @@
             const listItem = document.createElement('li');
             listItem.textContent = `Topic: ${topic}, Message: ${message.toString()}`;
             messageList.appendChild(listItem);
+
+            try {
+                const data = JSON.parse(message.toString());
+                if (data.num && data.points) {
+                    plotPoints(data.points);
+                }
+            } catch (e) {
+                console.error('Invalid message format:', e);
+            }
         });
 
-        // Handle errors
-        client.on('error', (err) => {
-            console.error('Connection error:', err);
-            document.getElementById('status').innerText = 'Connection Error';
-        });
+        // Function to plot points on the room layout
+        function plotPoints(points) {
+            const container = document.getElementById('room-container');
+            container.innerHTML = '<img id="room-layout" src="../jb_room_layout_321x251.jpg" alt="Room Layout">';
+            
+            points.forEach((point) => {
+                let [x, y] = point;
+
+                // Ensure points do not exceed image dimensions
+                x = Math.min(Math.max(x, 0), 320);
+                y = Math.min(Math.max(y, 0), 250);
+
+                const pointElement = document.createElement('div');
+                pointElement.className = 'point';
+                pointElement.style.left = `${x}px`;
+                pointElement.style.top = `${y}px`;
+                container.appendChild(pointElement);
+            });
+        }
+
+        // Function to simulate target movement every 1 seconds
+        // Function to simulate target movement continuously every 1 second
+		function jb_simul_target_moving() {
+			let messageInput = document.getElementById('message');
+			let messageData = JSON.parse(messageInput.value);
+
+			let movementPath = [
+				[150, 100], [160, 110], [170, 120], [180, 130], [190, 140], 
+				[200, 150], [210, 160], [220, 170], [230, 180], [240, 190],
+				[250, 200], [260, 210], [270, 220], [280, 230], [290, 240],
+				[300, 250], [310, 240], [300, 230], [290, 220], [280, 210],
+				[270, 200], [260, 190], [250, 180], [240, 170], [230, 160],
+				[220, 150], [210, 140], [200, 130], [190, 120], [180, 110],
+				[170, 100], [160, 90], [150, 80], [140, 70], [130, 60],
+				[120, 50], [110, 40], [100, 30], [90, 20], [80, 10], 
+				[70, 20], [60, 30], [50, 40], [40, 50], [30, 60], 
+				[20, 70], [10, 80], [10, 90], [10, 100]
+			]; // Circular path movement simulation
+
+			let step = 0;
+
+			function moveStep() {
+				// Set new position for the middle point (p2)
+				messageData.points[1] = movementPath[step];
+
+				// Update the input box to reflect current point
+				messageInput.value = JSON.stringify(messageData);
+
+				// Publish the updated message to MQTT
+				publishMessage();
+
+				// Move to the next step, looping back when reaching the end
+				step = (step + 1) % movementPath.length;
+
+				// Call function recursively after 1 second for infinite looping
+				setTimeout(moveStep, 250);
+			}
+
+			moveStep();  // Start the infinite movement loop
+		}
+
 
         // Publish a manual message to the broker
         function publishMessage() {
@@ -72,7 +187,7 @@
             const messageBase = document.getElementById('message').value;
 
             if (topic && messageBase) {
-                const messageToSend = `${messageBase} ${messageCounter++}`;
+                const messageToSend = `${messageBase}`;
                 client.publish(topic, messageToSend, (err) => {
                     if (err) {
                         console.error('Publish error:', err);
@@ -85,26 +200,21 @@
             }
         }
 
-		// Publish periodic date-time message with UTC+8 adjustment
-		function publishDateTimeMessage() {
-			const topic = document.getElementById('topic').value;
-			const now = new Date();
+        // Publish periodic date-time message with UTC+8 adjustment
+        function publishDateTimeMessage() {
+            const topic = document.getElementById('topic').value;
+            const now = new Date();
+            now.setHours(now.getHours() + 8);
+            const formattedDateTime = now.toISOString().slice(0, 19).replace('T', ' ');
 
-			// Convert UTC time to UTC+8 by adding 8 hours (8 * 60 * 60 * 1000 ms)
-			now.setHours(now.getHours() + 8);
-
-			// Format date-time as 'YYYY-MM-DD HH:MM:SS'
-			const formattedDateTime = now.toISOString().slice(0, 19).replace('T', ' ');
-
-			client.publish(topic, `Date-Time (UTC+8): ${formattedDateTime}`, (err) => {
-				if (err) {
-					console.error('Publish error:', err);
-				} else {
-					console.log(`Periodic message published: Date-Time (UTC+8): ${formattedDateTime}`);
-				}
-			});
-		}
-
+            client.publish(topic, `Date-Time (UTC+8): ${formattedDateTime}`, (err) => {
+                if (err) {
+                    console.error('Publish error:', err);
+                } else {
+                    console.log(`Periodic message published: Date-Time (UTC+8): ${formattedDateTime}`);
+                }
+            });
+        }
 
         // Handle disconnection
         client.on('close', () => {
@@ -114,3 +224,4 @@
     </script>
 </body>
 </html>
+
