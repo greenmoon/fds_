@@ -30,7 +30,7 @@
     </style>
 </head>
 <body>
-    <h1>Joybien Technologies MQTT WebSocket on mosqitto</h1>
+    <h1>Joybien Technologies MQTT WebSocket</h1>
     
     <div>
         <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
@@ -52,7 +52,7 @@
     </div>
 
     <script>
-        console.log('JB> (0) V01.01 2025.02.03');
+        console.log('JB> (0) V01.02 2025.02.03');
         
 	// MQTT Broker Configuration
         // Alert: use wss on Github based home page
@@ -96,7 +96,7 @@
 		
 		<!--
         client.on('connect', () => {
-            console.log('Connected to MQTT broker via WebSocket');
+            console.log('JB> (5) OK! Connected to MQTT broker via WebSocket');
             document.getElementById('status').innerText = 'Connected';
             client.subscribe('fds', (err) => {
                 if (!err) {
