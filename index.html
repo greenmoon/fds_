@@ -54,8 +54,9 @@
     <script>
         // MQTT Broker Configuration
         // Alert: use wss on Github based home page
-	const brokerUrl = 'wss://59.124.7.99:8080';  // OK! fixed ip, Change 'localhost' to your broker's IP 
-	//test.masquitto.org     
+	//const brokerUrl = 'wss://59.124.7.99:8080';  // OK! fixed ip, Change 'localhost' to your broker's IP 
+	const brokerUrl = 'wss://test.masquitto.org:8080';  // __! Change 'localhost' to your broker's IP 
+	
         
         const options = {
             clientId: 'mqtt_client_' + Math.random().toString(16).substr(2, 8),  // Generate a unique client ID
