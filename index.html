@@ -71,25 +71,25 @@
         let messageCounter = 1;  // Initialize counter for messages
 
         // Connect to the MQTT broker via WebSockets
-        console.log('JB> (3) mqtt.connect(brokerUrl, options) = brokerUrl, options);
+        console.log('JB> (3) mqtt.connect(brokerUrl, options) = ', brokerUrl, options);
         const client = mqtt.connect(brokerUrl, options);
 
 
         // Handle connection events
         // Automatically start the walking simulation once connected to MQTT
 		client.on('connect', () => {
-			console.log('Connected to MQTT broker via WebSocket');
+			console.log('JB> (4) OK! Connected to MQTT broker via WebSocket');
 			document.getElementById('status').innerText = 'Connected';
 
 			client.subscribe('fds', (err) => {
 				if (!err) {
 					console.log('Subscribed to fds');
 				} else {
-					console.error('Subscription error:', err);
+					console.error('JB> (5) Failed! Subscription error:', err);
 				}
 			});
 
-            setInterval(publishDateTimeMessage, 30000);
+            setInterval(publishDateTimeMessage, 3000);
 			jb_simul_target_moving();  // Start the infinite simulation automatically
 		});
 		
