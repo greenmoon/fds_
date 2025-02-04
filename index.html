@@ -1,3 +1,62 @@
+const mqtt = require("mqtt");
+
+// MQTT Connection Options
+const options = {
+    clientId: "mqtt_client_" + Math.random().toString(16).substr(2, 8), // Unique Client ID
+    keepalive: 60,    // Keep connection alive for 60 seconds
+    clean: true,      // Clean session
+    connectTimeout: 40000,  // Increase timeout to 40 seconds
+};
+
+// Connect to HiveMQ WebSocket Broker
+const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt", options);
+
+client.on("connect", () => {
+    console.log("✅ Connected to MQTT Broker!");
+
+    // Subscribe to a topic
+    client.subscribe("fds", (err) => {
+        if (!err) {
+            console.log("📩 Subscribed to 'fds'");
+        }
+    });
+
+    // Publish a message
+    client.publish("fds", "Hello, MQTT!", (err) => {
+        if (!err) {
+            console.log("✅ Message Sent!");
+        }
+    });
+});
+
+// Handle received messages
+client.on("message", (topic, message) => {
+    console.log(`📩 Message received on topic '${topic}': ${message.toString()}`);
+});
+
+// Handle Errors
+client.on("error", (err) => {
+    console.error("❌ Connection Error:", err);
+});
+
+// Handle disconnections and retries
+client.on("close", () => {
+    console.warn("⚠️ Disconnected! Attempting to reconnect...");
+});
+
+client.on("reconnect", () => {
+    console.log("🔄 Reconnecting...");
+});
+
+client.on("offline", () => {
+    console.warn("⚠️ MQTT Broker is offline.");
+});
+
+
+
+
+<!--
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -240,3 +299,5 @@
 </body>
 </html>
 
+
+-->
