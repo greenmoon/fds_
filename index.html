@@ -86,23 +86,23 @@
 
         // Handle connection events
         // Automatically start the walking simulation once connected to MQTT
-		client.on('connect', () => {
-			console.log('JB> (4) OK! Connected to MQTT broker via WebSocket');
-			document.getElementById('status').innerText = 'Connected';
+	client.on('connect', () => {
+		console.log('JB> (4) OK! Connected to MQTT broker via WebSocket');
+		document.getElementById('status').innerText = 'Connected';
 
-			client.subscribe('fds', (err) => {
-				if (!err) {
-					console.log('Subscribed to fds');
-				} else {
-					console.error('JB> (5) Failed! Subscription error:', err);
-				}
-			});
+		client.subscribe('fds', (err) => {
+			if (!err) {
+				console.log('Subscribed to fds');
+			} else {
+				console.error('JB> (5) Failed! Subscription error:', err);
+			}
+		});
 
-            setInterval(publishDateTimeMessage, 3000);
+                setInterval(publishDateTimeMessage, 3000);
 			jb_simul_target_moving();  // Start the infinite simulation automatically
 		});
 		
-		<!--
+        <!--
         client.on('connect', () => {
             console.log('JB> (5) OK! Connected to MQTT broker via WebSocket');
             document.getElementById('status').innerText = 'Connected';
@@ -118,7 +118,7 @@
             setInterval(publishDateTimeMessage, 30000);
 			jb_simul_target_moving();  // Start the infinite simulation automatically
         });
-		-->
+        -->
 		
         // Handle incoming messages
         client.on('message', (topic, message) => {
@@ -241,8 +241,6 @@
 	            console.log("✅ Message Sent!");
 	        }
 	    });
-		    
-
         }
 
         // Handle disconnection
