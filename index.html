@@ -212,7 +212,7 @@
             now.setHours(now.getHours() + 8);
             const formattedDateTime = now.toISOString().slice(0, 19).replace('T', ' ');
 
-            client.publish(topic, `{"Date-Time (UTC+8)": "${formattedDateTime}"`, (err) => {
+            client.publish(topic, `{"Date-Time (UTC+8)": "${formattedDateTime}"}`, (err) => {
                 if (err) {
                     console.error('Publish error:', err);
                 } else {
