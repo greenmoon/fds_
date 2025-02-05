@@ -30,7 +30,7 @@
 <body>
 
 	
-    <h1>Joybien Technologies MQTT WebSocket V01.14</h1>
+    <h1>Joybien Technologies MQTT WebSocket V01.15</h1>
 	
     <div>
         <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
@@ -100,7 +100,7 @@
 			}
 		});
 
-                setInterval(publishDateTimeMessage, 3000);
+                setInterval(publishDateTimeMessage, 10000);
 			jb_simul_target_moving();  // Start the infinite simulation automatically
 		});
  
@@ -220,8 +220,6 @@
                 }
 	    });           
         }
-
-	 
 
         // Handle disconnection
         client.on('close', () => {
