@@ -30,17 +30,42 @@
 <body>
 
 	
-    <h1>Joybien Technologies MQTT WebSocket V01.16</h1>
+    <h1>Joybien Technologies MQTT WebSocket V01.17</h1>
+
+   <div>
+    <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
+
+    <!-- Topic Input -->
+    <label for="topic"><strong>Topic:</strong></label>
+    <input type="text" id="topic" placeholder="Enter Topic" value="fds" style="width: 200px;">
+
+    <!-- Larger Text Area for Message Input -->
+    <label for="message"><strong>Message:</strong></label>
+    <textarea id="message" placeholder="Enter Message" rows="4" cols="50">
+{"num": 3,"points": [[10, 10], [150, 100], [310, 240]]}
+    </textarea>
+
+    <!-- Buttons -->
+    <br>
+    <button onclick="publishMessage()">Publish</button>
+    <button onclick="jb_simul_target_moving()">Simulate Movement</button>
+</div>
+
 	
+    <!--	
     <div>
         <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
         <input type="text" id="topic" placeholder="Enter Topic" value="fds">
         <input type="text" id="message" placeholder="Enter Message" 
                value='{"num": 3,"points": [[10, 10], [150, 100], [310, 240]]}'>
+
+ 
+	    
         <button onclick="publishMessage()">Publish</button>
         <button onclick="jb_simul_target_moving()">Simulate Movement</button>
     </div>
-
+    -->
+	
     <h2>Room Layout</h2>
     <div id="room-container">
         <img id="room-layout" src="./assets/jb_room_layout_321x251.jpg" alt="Room Layout">
