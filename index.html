@@ -30,7 +30,7 @@
 <body>
 
 	
-    <h1>Joybien Technologies MQTT WebSocket V01.12</h1>
+    <h1>Joybien Technologies MQTT WebSocket V01.13</h1>
 	
     <div>
         <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
@@ -212,13 +212,13 @@
             now.setHours(now.getHours() + 8);
             const formattedDateTime = now.toISOString().slice(0, 19).replace('T', ' ');
 
-            //client.publish(topic, `Date-Time (UTC+8): ${formattedDateTime}`, (err) => {
-            //    if (err) {
-            //        console.error('Publish error:', err);
-            //    } else {
-            //        console.log(`Periodic message published: Date-Time (UTC+8): ${formattedDateTime}`);
-            //    }
-	    //});           
+            client.publish(topic, `{"Date-Time (UTC+8)": "${formattedDateTime}"`, (err) => {
+                if (err) {
+                    console.error('Publish error:', err);
+                } else {
+                    console.log(`Periodic message published: Date-Time (UTC+8): ${formattedDateTime}`);
+                }
+	    });           
         }
 
 	 
