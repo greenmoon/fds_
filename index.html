@@ -4,10 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--
-    <title>Joybien Technologies MQTT WebSocket on 59.124.7.99:8080</title>
-    -->
-    <title>Joybien Technologies MQTT WebSocket on test.mosquitto.org</title>
+    <title>Joybien Technologies MQTT WebSocket</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
         #room-container {
@@ -33,8 +30,7 @@
 <body>
 
 	
-    <h1>Joybien Technologies MQTT WebSocket V01.08</h1>
-
+    <h1>Joybien Technologies MQTT WebSocket V01.09</h1>
 	
     <div>
         <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
@@ -57,7 +53,7 @@
 
     <script>
 	    
-        console.log('JB> (0) V01.07 since 2025.02.03');
+        console.log('JB> (0) since 2025.02.03');
         
 	// MQTT Broker Configuration
         // Alert: use wss on Github based home page
@@ -104,23 +100,6 @@
 			jb_simul_target_moving();  // Start the infinite simulation automatically
 		});
 		
-        <!--
-        client.on('connect', () => {
-            console.log('JB> (5) OK! Connected to MQTT broker via WebSocket');
-            document.getElementById('status').innerText = 'Connected';
-            client.subscribe('fds', (err) => {
-                if (!err) {
-                    console.log('Subscribed to fds');
-                } else {
-                    console.error('Subscription error:', err);
-                }
-            });
-
-            // Start periodic message publishing every 30 seconds
-            setInterval(publishDateTimeMessage, 30000);
-			jb_simul_target_moving();  // Start the infinite simulation automatically
-        });
-        -->
 		
         // Handle incoming messages
         client.on('message', (topic, message) => {
@@ -236,13 +215,6 @@
                 }
 	    });
            
-	    //* added one pub
-	    // Publish a message
-	    client.publish("fds", "Hello, MQTT!", (err) => {
-	        if (!err) {
-	            console.log("✅ Message Sent!");
-	        }
-	    });
         }
 
         // Handle disconnection
