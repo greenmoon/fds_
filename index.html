@@ -30,7 +30,7 @@
 <body>
 
 	
-    <h1>Joybien Technologies MQTT WebSocket V01.09</h1>
+    <h1>Joybien Technologies MQTT WebSocket V01.10</h1>
 	
     <div>
         <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
@@ -88,6 +88,12 @@
 		console.log('JB> (4) OK! Connected to MQTT broker via WebSocket');
 		document.getElementById('status').innerText = 'Connected';
 
+		// removed last retain data
+		console.log("JB> (4.1) OK! clear retain data");
+		client.publish("fds", "", { retain: true }, () => {
+		        console.log("JB> Retained message cleared!");
+		});
+		
 		client.subscribe('fds', (err) => {
 			if (!err) {
 				console.log('Subscribed to fds');
@@ -99,7 +105,8 @@
                 setInterval(publishDateTimeMessage, 3000);
 			jb_simul_target_moving();  // Start the infinite simulation automatically
 		});
-		
+ 
+	    
 		
         // Handle incoming messages
         client.on('message', (topic, message) => {
@@ -225,5 +232,3 @@
     </script>
 </body>
 </html>
-
- 
