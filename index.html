@@ -30,7 +30,7 @@
 <body>
 
 	
-    <h1>Joybien Technologies MQTT WebSocket V01.11</h1>
+    <h1>Joybien Technologies MQTT WebSocket V01.12</h1>
 	
     <div>
         <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
@@ -64,7 +64,6 @@
         //const brokerUrl = 'wss://broker.hivemq.com:8884/mqtt';  // OK! Change 'localhost' to your broker's IP
         const brokerUrl = 'wss://59.124.7.95/mqtt';  // OK! Change 'localhost' to your broker's IP
  
-	    
         console.log('JB> (1) Connected to MQTT broker via WebSocket by ', brokerUrl);
 	
         const options = {
@@ -80,7 +79,6 @@
         // Connect to the MQTT broker via WebSockets
         console.log('JB> (3) mqtt.connect(brokerUrl, options) = ', brokerUrl, options);
         const client = mqtt.connect(brokerUrl, options);
-
 
         // Handle connection events
         // Automatically start the walking simulation once connected to MQTT
@@ -148,7 +146,7 @@
 
         // Function to simulate target movement every 1 seconds
         // Function to simulate target movement continuously every 1 second
-		function jb_simul_target_moving() {
+	function jb_simul_target_moving() {
 			let messageInput = document.getElementById('message');
 			let messageData = JSON.parse(messageInput.value);
 
@@ -208,24 +206,22 @@
         }
 
         // Publish periodic date-time message with UTC+8 adjustment
-        function xpublishDateTimeMessage() {
+        function publishDateTimeMessage() {
             const topic = document.getElementById('topic').value;
             const now = new Date();
             now.setHours(now.getHours() + 8);
             const formattedDateTime = now.toISOString().slice(0, 19).replace('T', ' ');
 
-            client.publish(topic, `Date-Time (UTC+8): ${formattedDateTime}`, (err) => {
-                if (err) {
-                    console.error('Publish error:', err);
-                } else {
-                    console.log(`Periodic message published: Date-Time (UTC+8): ${formattedDateTime}`);
-                }
-	    });           
+            //client.publish(topic, `Date-Time (UTC+8): ${formattedDateTime}`, (err) => {
+            //    if (err) {
+            //        console.error('Publish error:', err);
+            //    } else {
+            //        console.log(`Periodic message published: Date-Time (UTC+8): ${formattedDateTime}`);
+            //    }
+	    //});           
         }
 
-	// do nothing    
-	function publishDateTimeMessage() {
-        }
+	 
 
         // Handle disconnection
         client.on('close', () => {
