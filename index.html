@@ -45,7 +45,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.34</h2>
+    <h2>Joybien Technologies DASHBOARD V01.35</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -60,7 +60,7 @@
         // (1) Connect to the MQTT broker
         console.log("(1) Connect to wss://59.124.7.95/mqtt");
         const client = mqtt.connect("wss://59.124.7.95/mqtt");
-        console.log("(1_OK) Connected");
+        console.log("(1) OK! Connected");
 
         // (2) Connection status updates
         client.on("connect", () => {
@@ -68,6 +68,7 @@
             client.subscribe("bed", (err) => {
                 if (!err) {
                     console.log("(2) Subscribed to topic: bed");
+                    console.log("(2) OK! Subscribed");
                 } else {
                     console.error("(2_error) Subscription error:", err);
                 }
@@ -79,6 +80,7 @@
         // Handle incoming messages and display on layout
         client.on("message", (topic, message) => {
             if (topic == "bed") {
+                console.log('(3) Reveived Message, Bytes => String => Data_Structure see followings,')
                 console.log(message)
                 console.log(message.toString())
                 const data = JSON.parse(message.toString());
