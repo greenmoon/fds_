@@ -45,7 +45,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.27</h2>
+    <h2>Joybien Technologies DASHBOARD V01.28</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -86,6 +86,7 @@
             if (topic == "bed") {
                 console.log(message)
                 const data = JSON.parse(message.toString());
+                console.log(data)
                 updateRoomLayout(data.loc);
             }
         });
