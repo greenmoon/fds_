@@ -87,6 +87,7 @@
                 console.log(message)
                 const data = JSON.parse(message.toString());
                 console.log(data)
+                console.log(data.loc)
                 updateRoomLayout(data.loc);
             }
         });
@@ -109,8 +110,8 @@
             overlay.innerHTML = ''; // Clear previous dots
 
             // Define real-world coordinate bounds
-            const x_min = -5, x_max = 5;  // Real-world x range
-            const y_min = -5, y_max = 5;  // Real-world y range
+            const x_min = -3, x_max = 3;  // Real-world x range
+            const y_min = -3, y_max = 3;  // Real-world y range
 
             // Get layout dimensions
             const layout_width = overlay.offsetWidth;
@@ -128,6 +129,9 @@
                 dot.className = "dot";
                 dot.style.left = `${x_px}px`;
                 dot.style.top = `${y_px}px`;
+                console.log(dot.style.left)
+                console.log(dot.style.top)
+
 
                 overlay.appendChild(dot);
             });
