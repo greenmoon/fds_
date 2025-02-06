@@ -30,16 +30,17 @@
 <body>
 
 	
-    <h1>Joybien Technologies MQTT WebSocket V01.18</h1>
+    <h1>Joybien Technologies MQTT WebSocket V01.19</h1>
 
    <div>
+    <!-- Socket Status -->	   
     <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
 
     <!-- Topic Input -->
     <label for="topic"><strong>Topic:</strong></label>
-    <input type="text" id="topic" placeholder="Enter Topic" value="fds" style="width: 200px;">
+    <input type="text" id="topic" placeholder="Enter Topic" value="bed" style="width: 200px;">
 
-    <!-- Larger Text Area for Message Input -->
+    <!-- Message: Larger Text Area for Message Input -->
     <label for="message"><strong>Message:</strong></label>
     <textarea id="message" placeholder="Enter Message" rows="4" cols="50">
 {"num": 3,"points": [[10, 10], [150, 100], [310, 240]]}
@@ -51,39 +52,23 @@
     <button onclick="jb_simul_target_moving()">Simulate Movement</button>
 </div>
 
-	
-    <!--	
-    <div>
-        <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
-        <input type="text" id="topic" placeholder="Enter Topic" value="fds">
-        <input type="text" id="message" placeholder="Enter Message" 
-               value='{"num": 3,"points": [[10, 10], [150, 100], [310, 240]]}'>
-
- 
-	    
-        <button onclick="publishMessage()">Publish</button>
-        <button onclick="jb_simul_target_moving()">Simulate Movement</button>
-    </div>
-    -->
-	
-    <h2>Room Layout</h2>
+     <!-- Room Bed Layout -->	
+    <h2>Room Bed Layout</h2>
     <div id="room-container">
         <img id="room-layout" src="./assets/jb_room_layout_321x251.jpg" alt="Room Layout">
     </div>
 
+    <!-- Received Message -->		
     <div>
         <h2>Received Messages:</h2>
         <ul id="messages"></ul>
     </div>
 
-    <script>
-	    
-        console.log('JB> (0) since 2025.02.03');
-        
+    <script>	    
+        console.log('JB> (0) since 2025.02.03');     
 	// MQTT Broker Configuration
         // Alert: use wss on Github based home page
-	    
-	//const brokerUrl = 'wss://59.124.7.99:8080';  // OK! fixed ip, Change 'localhost' to your broker's IP 
+	//* try some brokerURL
 	//const brokerUrl = 'wss://test.mosquitto.org:8085';  // __! Change 'localhost' to your broker's IP 
         //const brokerUrl = 'wss://iot.eclipse.org:8085';  // __! Change 'localhost' to your broker's IP 
         //const brokerUrl = 'wss://broker.hivemq.com:8884/mqtt';  // OK! Change 'localhost' to your broker's IP
@@ -113,13 +98,13 @@
 
 		// removed last retain data
 		console.log("JB> (4.1) OK! clear retain data");
-		client.publish("fds", "", { retain: true }, () => {
+		client.publish("bed", "", { retain: true }, () => {
 		        console.log("JB> Retained message cleared!");
 		});
 		
-		client.subscribe('fds', (err) => {
+		client.subscribe('bed', (err) => {
 			if (!err) {
-				console.log('Subscribed to fds');
+				console.log('Subscribed to bed');
 			} else {
 				console.error('JB> (5) Failed! Subscription error:', err);
 			}
@@ -128,8 +113,7 @@
                 setInterval(publishDateTimeMessage, 10000);
 			jb_simul_target_moving();  // Start the infinite simulation automatically
 		});
-     
-		
+	
         // Handle incoming messages
         client.on('message', (topic, message) => {
             console.log(`Received message: ${message.toString()} on topic: ${topic}`);
@@ -168,8 +152,8 @@
             });
         }
 
-        // Function to simulate target movement every 1 seconds
-        // Function to simulate target movement continuously every 1 second
+	// this is for testing only    
+        // Function to simiulate target movement continuously every 1 second
 	function jb_simul_target_moving() {
 			let messageInput = document.getElementById('message');
 			let messageData = JSON.parse(messageInput.value);
