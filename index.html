@@ -45,19 +45,12 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.32</h2>
+    <h2>Joybien Technologies DASHBOARD V01.33</h2>
     
     <p id="status">Status: Disconnected</p>
 
-    <!--
-    <div id="roomLayout"></div>
-    -->
-    
     <!-- Room Bed Layout -->    
-
-    
     <h2>Room Bed Layout</h2>
-    
     <div id="room-container">
         <img id="room-layout" src="./assets/jb_room_layout_321x251.jpg" alt="Room Layout">
         <div id="overlay"></div>
@@ -75,13 +68,13 @@
                 if (!err) {
                     console.log("(2) Subscribed to topic: bed");
                 } else {
-                    console.error("(2) Subscription error:", err);
+                    console.error("(2_error) Subscription error:", err);
                 }
             });
         });
 
         // (3) on “message” case
-        // pts_center: (3) [0.86, 1.6, 1.87]
+        // pts_center: (3) [0.86, 1.6, 1.87] for x y z (z unused here)
         // Handle incoming messages and display on layout
         client.on("message", (topic, message) => {
             if (topic == "bed") {
