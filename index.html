@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joybien Technologies MQTT WebSocket</title>
+    <title>Joybien Technologies BED Project</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
         #room-container {
@@ -29,12 +29,12 @@
 </head>
 <body>
 
-	
-    <h1>Joybien Technologies MQTT WebSocket V01.19</h1>
+    <!-- Show Version -->	
+    <h1>Joybien Technologies BED Project V01.20</h1>
 
    <div>
     <!-- Socket Status -->	   
-    <p><strong>Status:</strong> <span id="status">Disconnected</span></p>
+    <p><strong>Connect Status:</strong> <span id="status">Disconnected</span></p>
 
     <!-- Topic Input -->
     <label for="topic"><strong>Topic:</strong></label>
@@ -43,7 +43,7 @@
     <!-- Message: Larger Text Area for Message Input -->
     <label for="message"><strong>Message:</strong></label>
     <textarea id="message" placeholder="Enter Message" rows="4" cols="50">
-{"num": 3,"points": [[10, 10], [150, 100], [310, 240]]}
+        {"num": 3,"points": [[10, 10], [150, 100], [310, 240]]}
     </textarea>
 
     <!-- Buttons -->
@@ -67,25 +67,21 @@
     <script>	    
         console.log('JB> (0) since 2025.02.03');     
 	// MQTT Broker Configuration
-        // Alert: use wss on Github based home page
-	//* try some brokerURL
+        // Alert: in case wss failed then manual login 59.124.7.95 for KEY 
+	//* try following brokerURL
 	//const brokerUrl = 'wss://test.mosquitto.org:8085';  // __! Change 'localhost' to your broker's IP 
         //const brokerUrl = 'wss://iot.eclipse.org:8085';  // __! Change 'localhost' to your broker's IP 
         //const brokerUrl = 'wss://broker.hivemq.com:8884/mqtt';  // OK! Change 'localhost' to your broker's IP
         const brokerUrl = 'wss://59.124.7.95/mqtt';  // OK! Change 'localhost' to your broker's IP
- 
         console.log('JB> (1) Connected to MQTT broker via WebSocket by ', brokerUrl);
-	
         const options = {
             clientId: 'mqtt_client_' + Math.random().toString(16).substr(2, 8),  // Generate a unique client ID
             clean: true,  // Clean session
             connectTimeout: 4000,  // Timeout period
         };
-
         console.log('JB> (2) options = ', options);
 
         let messageCounter = 1;  // Initialize counter for messages
-
         // Connect to the MQTT broker via WebSockets
         console.log('JB> (3) mqtt.connect(brokerUrl, options) = ', brokerUrl, options);
         const client = mqtt.connect(brokerUrl, options);
@@ -96,7 +92,7 @@
 		console.log('JB> (4) OK! Connected to MQTT broker via WebSocket');
 		document.getElementById('status').innerText = 'Connected';
 
-		// removed last retain data
+		// Removed last retain data in case some unwanted retain data in begin line
 		console.log("JB> (4.1) OK! clear retain data");
 		client.publish("bed", "", { retain: true }, () => {
 		        console.log("JB> Retained message cleared!");
@@ -110,9 +106,9 @@
 			}
 		});
 
-                setInterval(publishDateTimeMessage, 10000);
-			jb_simul_target_moving();  // Start the infinite simulation automatically
-		});
+                //setInterval(publishDateTimeMessage, 10000);
+		//	jb_simul_target_moving();  // Start the infinite simulation automatically
+		//});
 	
         // Handle incoming messages
         client.on('message', (topic, message) => {
