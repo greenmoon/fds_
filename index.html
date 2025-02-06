@@ -81,14 +81,15 @@
         });
 
         // (3) on “message” case
+        // pts_center: (3) [0.86, 1.6, 1.87]
         // Handle incoming messages and display on layout
         client.on("message", (topic, message) => {
             if (topic == "bed") {
                 console.log(message)
                 const data = JSON.parse(message.toString());
                 console.log(data)
-                console.log(data.loc)
-                updateRoomLayout(data.loc);
+                console.log(data.pts_center)
+                updateRoomLayout(data.pts_center);
             }
         });
         
@@ -118,7 +119,7 @@
             const layout_height = overlay.offsetHeight;
 
             locations.forEach(coord => {
-                const [x, y] = coord;
+                const [x, y, z] = coord;
 
                 // Convert real-world coordinates to pixel coordinates
                 const x_px = ((x - x_min) / (x_max - x_min)) * layout_width;
