@@ -129,8 +129,8 @@
                 dot.className = "dot";
                 dot.style.left = `${x_px}px`;
                 dot.style.top = `${y_px}px`;
-                console.log(dot.style.left)
-                console.log(dot.style.top)
+                // Log pixel coordinates in the desired format
+                console.log(`\"loc_px\": [${Math.round(x_px)}, ${Math.round(y_px)}]`);
 
 
                 overlay.appendChild(dot);
