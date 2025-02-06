@@ -65,7 +65,7 @@
 
     <script>
         // (1) Connect to the MQTT broker
-        console.log("Connect to wss://59.124.7.95/mqtt");
+        console.log("(1) Connect to wss://59.124.7.95/mqtt");
         const client = mqtt.connect("wss://59.124.7.95/mqtt");
 
         // (2) Connection status updates
@@ -73,9 +73,9 @@
             document.getElementById("status").innerText = "Status: Connected";
             client.subscribe("bed", (err) => {
                 if (!err) {
-                    console.log("Subscribed to topic: bed");
+                    console.log("(2) Subscribed to topic: bed");
                 } else {
-                    console.error("Subscription error:", err);
+                    console.error("(2) Subscription error:", err);
                 }
             });
         });
@@ -83,7 +83,7 @@
         // (3) on “message” case
         // Handle incoming messages and display on layout
         client.on("message", (topic, message) => {
-            if (topic === "bed") {
+            if (topic == "bed") {
                 console.log(message)
                 const data = JSON.parse(message.toString());
                 updateRoomLayout(data.loc);
