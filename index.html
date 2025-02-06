@@ -45,7 +45,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.25</h2>
+    <h2>Joybien Technologies DASHBOARD V01.26</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -80,24 +80,25 @@
             });
         });
 
-        // (3) on “error” case
+        // (3) on “message” case
+        // Handle incoming messages and display on layout
+        client.on("message", (topic, message) => {
+            if (topic === "bed") {
+                console.log(message)
+                const data = JSON.parse(message.toString());
+                updateRoomLayout(data.loc);
+            }
+        });
+        
+        // (4) on “error” case
         client.on("error", (error) => {
             console.error("Connection Error:", error);
             document.getElementById("status").innerText = "Status: Connection Error";
         });
 
-        // (4) on “close” case
+        // (5) on “close” case
         client.on("close", () => {
             document.getElementById("status").innerText = "Status: Disconnected";
-        });
-
-        // (5) on “message” case
-        // Handle incoming messages and display on layout
-        client.on("message", (topic, message) => {
-            if (topic === "bed") {
-                const data = JSON.parse(message.toString());
-                updateRoomLayout(data.loc);
-            }
         });
 
         // (6) on “update layout by x y ” case
