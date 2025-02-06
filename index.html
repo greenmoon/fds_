@@ -30,7 +30,7 @@
 <body>
 
     <!-- Show Version -->	
-    <h1>Joybien Technologies BED Project V01.21</h1>
+    <h1>Joybien Technologies BED Project V01.22</h1>
 
    <div>
     <!-- Socket Status -->	   
@@ -106,9 +106,9 @@
 			}
 		});
 
-                //setInterval(publishDateTimeMessage, 10000);
+                setInterval(publishDateTimeMessage, 10000);
 			jb_simul_target_moving();  // Start the infinite simulation automatically
-		//});
+		});
 	
         // Handle incoming messages
         client.on('message', (topic, message) => {
