@@ -45,7 +45,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.33</h2>
+    <h2>Joybien Technologies DASHBOARD V01.34</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -60,6 +60,7 @@
         // (1) Connect to the MQTT broker
         console.log("(1) Connect to wss://59.124.7.95/mqtt");
         const client = mqtt.connect("wss://59.124.7.95/mqtt");
+        console.log("(1_OK) Connected");
 
         // (2) Connection status updates
         client.on("connect", () => {
@@ -79,6 +80,7 @@
         client.on("message", (topic, message) => {
             if (topic == "bed") {
                 console.log(message)
+                console.log(message.toString())
                 const data = JSON.parse(message.toString());
                 console.log(data)
                 console.log(data.pts_center)
@@ -91,22 +93,18 @@
         function updateRoomLayout(locations) {
             const overlay = document.getElementById("overlay");
             overlay.innerHTML = ''; // Clear previous dots
-
             // Define real-world coordinate bounds
             const x_min = -3, x_max = 3;  // Real-world x range
             const y_min = -3, y_max = 3;  // Real-world y range
-
             // Get layout dimensions
             const layout_width = overlay.offsetWidth;
             const layout_height = overlay.offsetHeight;
-
+            console.log(`\"layout_width_height\": [${layout_width}, ${layout_height}]`);
             locations.forEach(coord => {
                 const [x, y, z] = coord;
-
                 // Convert real-world coordinates to pixel coordinates
                 const x_px = ((x - x_min) / (x_max - x_min)) * layout_width;
                 const y_px = layout_height - ((y - y_min) / (y_max - y_min)) * layout_height;
-
                 // Create and position the dot
                 const dot = document.createElement("div");
                 dot.className = "dot";
