@@ -1,280 +1,133 @@
- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joybien Technologies BED Project</title>
+    <title>Room Layout Dashboard</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
-        #room-container {
+        body { font-family: Arial, sans-serif; }
+        #status { margin-bottom: 10px; font-weight: bold; }
+        #roomLayout {
             position: relative;
-            width: 321px;
-            height: 251px;
-            border: 1px solid #ccc;
+            width: 400px;
+            height: 400px;
+            border: 2px solid #333;
+            background-color: #f0f0f0;
         }
-        #room-layout {
-            width: 100%;
-            height: 100%;
-        }
-        .point {
+        .dot {
             position: absolute;
             width: 10px;
             height: 10px;
             background-color: red;
             border-radius: 50%;
-            transform: translate(-50%, -50%);
+        }
+        #room-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin-top: 20px;
+        }
+        #room-layout {
+            width: 100%;
+            height: auto;
+            border: 2px solid #333;
+        }
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
 
-    <!-- Show Version -->	
-    <h1>Joybien Technologies BED Project V01.22</h1>
+    <h2>Room Layout Dashboard</h2>
+    <p id="status">Status: Disconnected</p>
 
-   <div>
-    <!-- Socket Status -->	   
-    <p><strong>Connect Status:</strong> <span id="status">Disconnected</span></p>
+    <div id="roomLayout"></div>
 
-    <!-- Topic Input -->
-    <label for="topic"><strong>Topic:</strong></label>
-    <input type="text" id="topic" placeholder="Enter Topic" value="bed" style="width: 200px;">
-
-    <!-- Message: Larger Text Area for Message Input -->
-    <label for="message"><strong>Message:</strong></label>
-    <textarea id="message" placeholder="Enter Message" rows="4" cols="50">
-        {"num": 3,"points": [[10, 10], [150, 100], [310, 240]]}
-    </textarea>
-
-    <!-- Buttons -->
-    <br>
-    <button onclick="publishMessage()">Publish</button>
-    <button onclick="jb_simul_target_moving()">Simulate Movement</button>
-</div>
-
-     <!-- Room Bed Layout -->	
+    <!-- Room Bed Layout -->    
     <h2>Room Bed Layout</h2>
     <div id="room-container">
         <img id="room-layout" src="./assets/jb_room_layout_321x251.jpg" alt="Room Layout">
+        <div id="overlay"></div>
     </div>
 
-    <!-- Received Message -->		
-    <div>
-        <h2>Received Messages:</h2>
-        <ul id="messages"></ul>
-    </div>
+    <script>
+        // (1) Connect to the MQTT broker
+        const client = mqtt.connect("wss://59.14.7.95/mqtt");
 
-    <script>	    
-        console.log('JB> (0) since 2025.02.03');     
-	// MQTT Broker Configuration
-        // Alert: in case wss failed then manual login 59.124.7.95 for KEY 
-	//* try following brokerURL
-	//const brokerUrl = 'wss://test.mosquitto.org:8085';  // __! Change 'localhost' to your broker's IP 
-        //const brokerUrl = 'wss://iot.eclipse.org:8085';  // __! Change 'localhost' to your broker's IP 
-        //const brokerUrl = 'wss://broker.hivemq.com:8884/mqtt';  // OK! Change 'localhost' to your broker's IP
-        const brokerUrl = 'wss://59.124.7.95/mqtt';  // OK! Change 'localhost' to your broker's IP
-        console.log('JB> (1) Connected to MQTT broker via WebSocket by ', brokerUrl);
-        const options = {
-            clientId: 'mqtt_client_' + Math.random().toString(16).substr(2, 8),  // Generate a unique client ID
-            clean: true,  // Clean session
-            connectTimeout: 4000,  // Timeout period
-        };
-        console.log('JB> (2) options = ', options);
-
-        let messageCounter = 1;  // Initialize counter for messages
-        // Connect to the MQTT broker via WebSockets
-        console.log('JB> (3) mqtt.connect(brokerUrl, options) = ', brokerUrl, options);
-        const client = mqtt.connect(brokerUrl, options);
-
-        // Handle connection events
-        // Automatically start the walking simulation once connected to MQTT
-	client.on('connect', () => {
-		console.log('JB> (4) OK! Connected to MQTT broker via WebSocket');
-		document.getElementById('status').innerText = 'Connected';
-
-		// Removed last retain data in case some unwanted retain data in begin line
-		console.log("JB> (4.1) OK! clear retain data");
-		client.publish("bed", "", { retain: true }, () => {
-		        console.log("JB> Retained message cleared!");
-		});
-		
-		client.subscribe('bed', (err) => {
-			if (!err) {
-				console.log('Subscribed to bed');
-			} else {
-				console.error('JB> (5) Failed! Subscription error:', err);
-			}
-		});
-
-                setInterval(publishDateTimeMessage, 10000);
-			jb_simul_target_moving();  // Start the infinite simulation automatically
-		});
-	
-        // Handle incoming messages
-        client.on('message', (topic, message) => {
-            console.log(`Received message: ${message.toString()} on topic: ${topic}`);
-            const messageList = document.getElementById('messages');
-            const listItem = document.createElement('li');
-            listItem.textContent = `Topic: ${topic}, Message: ${message.toString()}`;
-            messageList.appendChild(listItem);
-
-            try {
-                const data = JSON.parse(message.toString());
-                if (data.num && data.points) {
-                    plotPoints(data.points);
+        // (2) Connection status updates
+        client.on("connect", () => {
+            document.getElementById("status").innerText = "Status: Connected";
+            client.subscribe("bed", (err) => {
+                if (!err) {
+                    console.log("Subscribed to topic: bed");
+                } else {
+                    console.error("Subscription error:", err);
                 }
-            } catch (e) {
-                console.error('Invalid message format:', e);
+            });
+        });
+
+        // (3) on “error” case
+        client.on("error", (error) => {
+            console.error("Connection Error:", error);
+            document.getElementById("status").innerText = "Status: Connection Error";
+        });
+
+        // (4) on “close” case
+        client.on("close", () => {
+            document.getElementById("status").innerText = "Status: Disconnected";
+        });
+
+        // (5) on “message” case
+        // Handle incoming messages and display on layout
+        client.on("message", (topic, message) => {
+            if (topic === "bed") {
+                const data = JSON.parse(message.toString());
+                updateRoomLayout(data.loc);
             }
         });
 
-        // Function to plot points on the room layout
-        function plotPoints(points) {
-            const container = document.getElementById('room-container');
-            container.innerHTML = '<img id="room-layout" src="./assets/jb_room_layout_321x251.jpg" alt="Room Layout">';
-            
-            points.forEach((point) => {
-                let [x, y] = point;
+        // (6) on “update layout by x y ” case
 
-                // Ensure points do not exceed image dimensions
-                x = Math.min(Math.max(x, 0), 320);
-                y = Math.min(Math.max(y, 0), 250);
+        // Function to update the room layout with new coordinates
+        function updateRoomLayout(locations) {
+            const overlay = document.getElementById("overlay");
+            overlay.innerHTML = ''; // Clear previous dots
 
-                const pointElement = document.createElement('div');
-                pointElement.className = 'point';
-                pointElement.style.left = `${x}px`;
-                pointElement.style.top = `${y}px`;
-                container.appendChild(pointElement);
+            // Define real-world coordinate bounds
+            const x_min = -5, x_max = 5;  // Real-world x range
+            const y_min = -5, y_max = 5;  // Real-world y range
+
+            // Get layout dimensions
+            const layout_width = overlay.offsetWidth;
+            const layout_height = overlay.offsetHeight;
+
+            locations.forEach(coord => {
+                const [x, y] = coord;
+
+                // Convert real-world coordinates to pixel coordinates
+                const x_px = ((x - x_min) / (x_max - x_min)) * layout_width;
+                const y_px = layout_height - ((y - y_min) / (y_max - y_min)) * layout_height;
+
+                // Create and position the dot
+                const dot = document.createElement("div");
+                dot.className = "dot";
+                dot.style.left = `${x_px}px`;
+                dot.style.top = `${y_px}px`;
+
+                overlay.appendChild(dot);
             });
         }
-
-	// this is for testing only    
-        // Function to simiulate target movement continuously every 1 second
-	function jb_simul_target_moving() {
-			let messageInput = document.getElementById('message');
-			let messageData = JSON.parse(messageInput.value);
-
-			let xmovementPath = [
-				[150, 100], [160, 110], [170, 120], [180, 130], [190, 140], 
-				[200, 150], [210, 160], [220, 170], [230, 180], [240, 190],
-				[250, 200], [260, 210], [270, 220], [280, 230], [290, 240],
-				[300, 250], [310, 240], [300, 230], [290, 220], [280, 210],
-				[270, 200], [260, 190], [250, 180], [240, 170], [230, 160],
-				[220, 150], [210, 140], [200, 130], [190, 120], [180, 110],
-				[170, 100], [160, 90], [150, 80], [140, 70], [130, 60],
-				[120, 50], [110, 40], [100, 30], [90, 20], [80, 10], 
-				[70, 20], [60, 30], [50, 40], [40, 50], [30, 60], 
-				[20, 70], [10, 80], [10, 90], [10, 100]
-			]; // Circular path movement simulation
-			let movementPath = [
-			    // First Circle - Walking Up, Down, Circular Route
-			    [150, 100], [160, 110], [170, 120], [180, 130], [190, 140],
-			    [200, 150], [210, 160], [220, 170], [230, 180], [240, 190],
-			    [250, 200], [260, 210], [270, 220], [280, 230], [290, 240],
-			    [300, 250], [310, 240], [300, 230], [290, 220], [280, 210],
-			    [270, 200], [260, 190], [250, 180], [240, 170], [230, 160],
-			    [220, 150], [210, 140], [200, 130], [190, 120], [180, 110],
-			    [170, 100], [160, 90], [150, 80], [140, 70], [130, 60],
-			    [120, 50], [110, 40], [100, 30], [90, 20], [80, 10],
-			    [70, 20], [60, 30], [50, 40], [40, 50], [30, 60], 
-			    [20, 70], [10, 80], [10, 90], [10, 100],
-			
-			    // Repeat with minor variations (2nd loop)
-			    [20, 110], [30, 120], [40, 130], [50, 140], [60, 150],
-			    [70, 160], [80, 170], [90, 180], [100, 190], [110, 200],
-			    [120, 210], [130, 220], [140, 230], [150, 240], [160, 250],
-			    [170, 240], [180, 230], [190, 220], [200, 210], [210, 200],
-			    [220, 190], [230, 180], [240, 170], [250, 160], [260, 150],
-			    [270, 140], [280, 130], [290, 120], [300, 110], [310, 100],
-			
-			    // 3rd loop (Reversed smaller path)
-			    [300, 90], [290, 80], [280, 70], [270, 60], [260, 50],
-			    [250, 40], [240, 30], [230, 20], [220, 10], [210, 20],
-			    [200, 30], [190, 40], [180, 50], [170, 60], [160, 70],
-			    [150, 80], [140, 90], [130, 100], [120, 110], [110, 120],
-			
-			    // 4th Loop - Shorter path with quick turns
-			    [100, 130], [90, 140], [80, 150], [70, 160], [60, 170],
-			    [50, 180], [40, 190], [30, 200], [20, 210], [10, 220],
-			    [20, 230], [30, 240], [40, 250], [50, 240], [60, 230],
-			    [70, 220], [80, 210], [90, 200], [100, 190], [110, 180],
-			
-			    // 5th Loop - Smooth down to the starting point
-			    [120, 170], [130, 160], [140, 150], [150, 140], [160, 130],
-			    [170, 120], [180, 110], [190, 100], [200, 90], [210, 80],
-			    [220, 70], [230, 60], [240, 50], [250, 40], [260, 30],
-			    [270, 20], [280, 10], [290, 20], [300, 30], [310, 40],
-			    [300, 50], [290, 60], [280, 70], [270, 80], [260, 90],
-			    [250, 100], [240, 110], [230, 120], [220, 130], [210, 140],
-			    [200, 150], [190, 160], [180, 170], [170, 180], [160, 190],
-			    [150, 200], [140, 210], [130, 220], [120, 230], [110, 240],
-			    [100, 250], [90, 240], [80, 230], [70, 220], [60, 210],
-			    [50, 200], [40, 190], [30, 180], [20, 170], [10, 160]
-			];
-
-			let step = 0;
-
-			function moveStep() {
-				// Set new position for the middle point (p2)
-				messageData.points[1] = movementPath[step];
-
-				// Update the input box to reflect current point
-				messageInput.value = JSON.stringify(messageData);
-
-				// Publish the updated message to MQTT
-				publishMessage();
-
-				// Move to the next step, looping back when reaching the end
-				step = (step + 1) % movementPath.length;
-
-				// Call function recursively per 80 ms for infinite looping
-				setTimeout(moveStep, 80);
-			}
-
-			moveStep();  // Start the infinite movement loop
-		}
-
-
-        // Publish a manual message to the broker
-        function publishMessage() {
-            const topic = document.getElementById('topic').value;
-            const messageBase = document.getElementById('message').value;
-
-            if (topic && messageBase) {
-                const messageToSend = `${messageBase}`;
-                client.publish(topic, messageToSend, (err) => {
-                    if (err) {
-                        console.error('Publish error:', err);
-                    } else {
-                        console.log(`Message "${messageToSend}" published to topic "${topic}"`);
-                    }
-                });
-            } else {
-                alert('Please enter both topic and message.');
-            }
-        }
-
-        // Publish periodic date-time message with UTC+8 adjustment
-        function publishDateTimeMessage() {
-            const topic = document.getElementById('topic').value;
-            const now = new Date();
-            now.setHours(now.getHours() + 8);
-            const formattedDateTime = now.toISOString().slice(0, 19).replace('T', ' ');
-
-            client.publish(topic, `{"Date-Time (UTC+8)": "${formattedDateTime}"}`, (err) => {
-                if (err) {
-                    console.error('Publish error:', err);
-                } else {
-                    console.log(`Periodic message published: Date-Time (UTC+8): ${formattedDateTime}`);
-                }
-	    });           
-        }
-
-        // Handle disconnection
-        client.on('close', () => {
-            console.log('JB> (4) Disconnected from MQTT broker');
-            document.getElementById('status').innerText = 'Disconnected';
-        });
     </script>
+
 </body>
 </html>
+
+
+
+
