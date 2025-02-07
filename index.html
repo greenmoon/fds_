@@ -45,7 +45,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.43</h2>
+    <h2>Joybien Technologies DASHBOARD V01.44</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -110,6 +110,9 @@
             locations.forEach(coord => {
                 const [x, y, z] = coord;
                 // Convert real-world coordinates to pixel coordinates
+                // in REAL layout case
+                layout_width = 321;
+                layout_height = 251;
                 const x_px = jb_map(x, x_min, x_max,  0, layout_width);
                 const y_px = jb_map(y, y_min, y_max,  layout_height, 0);
                 // Create and position the dot
