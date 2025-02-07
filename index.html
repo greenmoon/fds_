@@ -92,7 +92,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.59</h2>
+    <h2>BED DASHBOARD V01.60</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -106,7 +106,7 @@
     <!-- Test Controls -->
     <div id="test-controls">
         <h3>Test Message Publisher</h3>
-        <textarea id="test-message">{"time":"2025/02/06-17:15:19", "sn":"sn00001c", "location":"room 1002", "fn":278921, "pts_center":[[0.55, 0.82, 1.64]], "state":"SIT"}</textarea>
+        <textarea id="test-message">{"time":"2025/02/06-17:15:19", "sn":"sn00001c", "location":"room 1002", "fn":278921, "pts_center":[[-1.55, 1.82, 1.64]], "state":"SIT"}</textarea>
         <br>
         <button id="test-button" onclick="jb_pub_test_message()">TEST</button>
     </div>
@@ -140,16 +140,18 @@
                 console.log(data)
                 console.log(data.pts_center)
                 updateRoomLayout(data.pts_center);
-                jb_show_state(data.state);
+                //jb_show_state(data.state);
                 jb_show_message(data);
             }
         });     
 
+        // (4.1) function for jb_map()
         // simple map function
         function jb_map(x, x1, x2, y1, y2) {
             return (y2 - y1) / (x2 - x1) * (x - x1) + y1; 
         }
 
+        // (4.2) function for updateRoomLayout()
         function updateRoomLayout(locations) {
             const overlay = document.getElementById("overlay");
             overlay.innerHTML = ''; // Clear previous dots
@@ -184,6 +186,7 @@
             });
         }
 
+        // (4.3) function for jb_show_state()
         // Function to show state in the center of the room layout
         function jb_show_state(state) {
             const overlay = document.getElementById("overlay");
@@ -223,6 +226,7 @@
             overlay.appendChild(messageBox);
         }
 
+        // (4.4) function for jb_put_test_message()
         // Function to publish a test message
         function jb_pub_test_message() {
             const messageField = document.getElementById("test-message");
