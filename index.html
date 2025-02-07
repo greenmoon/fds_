@@ -68,12 +68,31 @@
         .message-box td {
             padding: 2px 5px;
         }
+        #test-controls {
+            margin-top: 20px;
+        }
+        #test-message {
+            width: 80%;
+            height: 100px;
+        }
+        #test-button {
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #test-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.56</h2>
+    <h2>Joybien Technologies DASHBOARD V01.57</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -82,6 +101,14 @@
     <div id="room-container">
         <img id="room-layout" src="./assets/jb_room_layout_321x251.jpg" alt="Room Layout">
         <div id="overlay"></div>
+    </div>
+
+    <!-- Test Controls -->
+    <div id="test-controls">
+        <h3>Test Message Publisher</h3>
+        <textarea id="test-message">{"time":"2025/02/06-17:15:19", "sn":"sn00001c", "location":"room 1002", "fn":278921, "pts_center":[0.55, 0.82, 1.64], "state":"SIT"}</textarea>
+        <br>
+        <button id="test-button" onclick="jb_pub_test_message()">TEST</button>
     </div>
 
     <script>
@@ -106,7 +133,7 @@
         // (3) on “message” case
         client.on("message", (topic, message) => {
             if (topic == "bed") {
-                console.log('(3) Reveived Message, Bytes => String => Data_Structure see followings,')
+                console.log('(3) Received Message, Bytes => String => Data_Structure see followings,')
                 console.log(message)
                 console.log(message.toString())
                 const data = JSON.parse(message.toString());
@@ -194,6 +221,19 @@
 
             messageBox.appendChild(table);
             overlay.appendChild(messageBox);
+        }
+
+        // Function to publish a test message
+        function jb_pub_test_message() {
+            const messageField = document.getElementById("test-message");
+            const message = messageField.value;
+            try {
+                const parsedMessage = JSON.parse(message);
+                client.publish("bed", JSON.stringify(parsedMessage));
+                console.log("(TEST) Published message:", parsedMessage);
+            } catch (error) {
+                console.error("Invalid JSON format:", error);
+            }
         }
 
         // (5) on “error” case
