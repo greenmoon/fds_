@@ -45,7 +45,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.44</h2>
+    <h2>Joybien Technologies DASHBOARD V01.45</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -104,8 +104,8 @@
             const x_min = -2, x_max = 2;  // Real-world x range
             const y_min =  0, y_max = 4;  // Real-world y range
             // Get layout dimensions
-            const layout_width = overlay.offsetWidth;
-            const layout_height = overlay.offsetHeight;
+            layout_width = overlay.offsetWidth;
+            layout_height = overlay.offsetHeight;
             console.log(`\"layout_width_height\": [${layout_width}, ${layout_height}]`);
             locations.forEach(coord => {
                 const [x, y, z] = coord;
