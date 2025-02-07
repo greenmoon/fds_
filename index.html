@@ -49,12 +49,31 @@
             border-radius: 5px;
             transform: translate(-50%, -50%);
         }
+        .message-box {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(173, 216, 230, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            color: blue;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid #333;
+        }
+        .message-box table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .message-box td {
+            padding: 2px 5px;
+        }
     </style>
 </head>
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.55</h2>
+    <h2>Joybien Technologies DASHBOARD V01.56</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -95,15 +114,15 @@
                 console.log(data.pts_center)
                 updateRoomLayout(data.pts_center);
                 jb_show_state(data.state);
+                jb_show_message(data);
             }
         });     
 
-        // (4.1) simple map function
+        // simple map function
         function jb_map(x, x1, x2, y1, y2) {
             return (y2 - y1) / (x2 - x1) * (x - x1) + y1; 
         }
 
-        // (4.2) updateRoomLayout function
         function updateRoomLayout(locations) {
             const overlay = document.getElementById("overlay");
             overlay.innerHTML = ''; // Clear previous dots
@@ -138,7 +157,7 @@
             });
         }
 
-        // (4.3) Function to show state in the center of the room layout
+        // Function to show state in the center of the room layout
         function jb_show_state(state) {
             const overlay = document.getElementById("overlay");
             const stateLabel = document.createElement("div");
@@ -150,6 +169,31 @@
             stateLabel.style.top = '50%';
 
             overlay.appendChild(stateLabel);
+        }
+
+        // Function to show key-value message in the top-left corner
+        function jb_show_message(data) {
+            const overlay = document.getElementById("overlay");
+            const messageBox = document.createElement("div");
+            messageBox.className = "message-box";
+
+            const table = document.createElement("table");
+            
+            for (const [key, value] of Object.entries(data)) {
+                const row = document.createElement("tr");
+                const keyCell = document.createElement("td");
+                const valueCell = document.createElement("td");
+
+                keyCell.innerText = key;
+                valueCell.innerText = Array.isArray(value) ? value.join(", ") : value;
+
+                row.appendChild(keyCell);
+                row.appendChild(valueCell);
+                table.appendChild(row);
+            }
+
+            messageBox.appendChild(table);
+            overlay.appendChild(messageBox);
         }
 
         // (5) on “error” case
@@ -166,4 +210,3 @@
 
 </body>
 </html>
- 
