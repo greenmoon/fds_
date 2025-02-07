@@ -45,7 +45,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.39</h2>
+    <h2>Joybien Technologies DASHBOARD V01.40</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -106,7 +106,7 @@
                 const [x, y, z] = coord;
                 // Convert real-world coordinates to pixel coordinates
                 const x_px = ((x - x_min) / (x_max - x_min)) * layout_width;
-                const y_px = layout_height - ((y - y_min) / (y_max - y_min)) * layout_height;
+                const y_px = ((y - y_min) / (y_max - y_min)) * layout_height;
                 // Create and position the dot
                 const dot = document.createElement("div");
                 dot.className = "dot";
