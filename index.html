@@ -9,7 +9,7 @@
         body { font-family: Arial, sans-serif; }
         #status { margin-bottom: 10px; font-weight: bold; }
         #roomLayout {
-            position: relative;
+            position: abolute;
             width: 321px;
             height: 251px;
             border: 2px solid #333;
@@ -45,7 +45,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.46</h2>
+    <h2>Joybien Technologies DASHBOARD V01.48</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -94,10 +94,43 @@
         function jb_map(x, x1, x2, y1, y2) {
             return (y2 - y1) / (x2 - x1) * (x - x1) + y1; 
         }
+
+        function updateRoomLayout(locations) {
+            const overlay = document.getElementById("overlay");
+            overlay.innerHTML = ''; // Clear previous dots
+        
+            // Define real-world coordinate bounds
+            const x_min = -2, x_max = 2;  // Adjust as needed
+            const y_min = 0, y_max = 4;   // Adjust as needed
+        
+            // Force overlay to match image dimensions
+            overlay.style.width = "321px";
+            overlay.style.height = "251px";
+        
+            locations.forEach(coord => {
+                const [x, y] = coord;  // Ignore z for now
+        
+                // Convert real-world coordinates to pixel coordinates
+                const x_px = jb_map(x, x_min, x_max, 0, 321);      // Match image width
+                const y_px = jb_map(y, y_min, y_max, 251, 0);      // Match image height
+        
+                // Create and position the dot
+                const dot = document.createElement("div");
+                dot.className = "dot";
+                dot.style.left = `${x_px}px`;
+                dot.style.top = `${y_px}px`;
+        
+                // Log for debugging
+                console.log(`\"loc_px\": [${Math.round(x_px)}, ${Math.round(y_px)}], \"x, y\": [${x}, ${y}]`);
+        
+                overlay.appendChild(dot);
+            });
+        }
+
         
         // (3) on “update layout by x y ” case
         // Function to update the room layout with new coordinates
-        function updateRoomLayout(locations) {
+        function xupdateRoomLayout(locations) {
             const overlay = document.getElementById("overlay");
             overlay.innerHTML = ''; // Clear previous dots
             // Define real-world coordinate bounds
