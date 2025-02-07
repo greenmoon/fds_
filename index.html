@@ -53,7 +53,7 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            background-color: rgba(173, 216, 230, 0.9);
+            background-color: rgba(173, 216, 230, 0.3);
             padding: 10px;
             border-radius: 5px;
             color: blue;
@@ -92,7 +92,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBOARD V01.60</h2>
+    <h2>BED DASHBOARD V01.62</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -201,6 +201,7 @@
             overlay.appendChild(stateLabel);
         }
 
+        // (4.4) function for jb_show_message()
         // Function to show key-value message in the top-left corner
         function jb_show_message(data) {
             const overlay = document.getElementById("overlay");
@@ -226,7 +227,7 @@
             overlay.appendChild(messageBox);
         }
 
-        // (4.4) function for jb_put_test_message()
+        // (4.5) function for jb_put_test_message()
         // Function to publish a test message
         function jb_pub_test_message() {
             const messageField = document.getElementById("test-message");
