@@ -45,7 +45,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.40</h2>
+    <h2>Joybien Technologies DASHBOARD V01.41</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -90,6 +90,10 @@
             }
         });
 
+        function jb_map(x, x1, x2, y1, y2) {
+           
+
+            
         // (3) on “update layout by x y ” case
         // Function to update the room layout with new coordinates
         function updateRoomLayout(locations) {
@@ -105,8 +109,8 @@
             locations.forEach(coord => {
                 const [x, y, z] = coord;
                 // Convert real-world coordinates to pixel coordinates
-                const x_px = ((x - x_min) / (x_max - x_min)) * layout_width;
-                const y_px = ((y - y_min) / (y_max - y_min)) * layout_height;
+                const x_px = (layout_width) / (x_max - x_min) * (x - x_min);
+                const y_px = (layout_height - (layout_height / 2)) / (y_max - y_min) * (y - y_min) + (layout_height / 2) ;
                 // Create and position the dot
                 const dot = document.createElement("div");
                 dot.className = "dot";
@@ -127,6 +131,8 @@
             client.on("close", () => {
                 document.getElementById("status").innerText = "Status: Disconnected";
             });
+
+            
             
         }
     </script>
