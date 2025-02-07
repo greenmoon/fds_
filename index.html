@@ -101,7 +101,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBOARD V01.65</h2>
+    <h2>BED DASHBOARD V01.66</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -176,9 +176,9 @@
         
             locations.forEach(coord => {
                 const [x, y] = coord;
-        
-                const x_px = jb_map(x, x_min, x_max, 0, 400);
-                const y_px = jb_map(y, y_min, y_max, 320, 0);
+                // by CLICK tool for 34 371 etc
+                const x_px = jb_map(x, x_min, x_max, 34, 371);
+                const y_px = jb_map(y, y_min, y_max, 290, 38);
         
                 const dot = document.createElement("div");
                 dot.className = "dot";
