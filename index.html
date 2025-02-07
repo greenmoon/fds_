@@ -46,7 +46,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.52</h2>
+    <h2>Joybien Technologies DASHBOARD V01.53</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -114,8 +114,8 @@
                 const [x, y] = coord;
         
                 // Convert real-world coordinates to pixel coordinates
-                const x_px = jb_map(x, x_min, x_max, 0, 321 + 50);
-                const y_px = jb_map(y, y_min, y_max, 251 + 40, 0);
+                const x_px = jb_map(x, x_min, x_max, 0, 400);
+                const y_px = jb_map(y, y_min, y_max, 320, 0);
         
                 // Create and position the dot, adjusting for dot size
                 const dot = document.createElement("div");
