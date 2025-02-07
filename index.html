@@ -101,12 +101,12 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBOARD V01.66</h2>
+    <h2>BED DASHBOARD V01.67</h2>
     
     <p id="status">Status: Disconnected</p>
 
     <!-- Room Bed Layout -->    
-    <h2>Room Bed Layout (in JB office)</h2>
+    <h2 id="room-title">Room Bed Layout (in JB office)</h2>
     <div id="room-container">
         <img id="room-layout" src="./assets/jb_room_layout_321x251.jpg" alt="Room Layout">
         <div id="overlay"></div>
@@ -146,13 +146,10 @@
         client.on("message", (topic, message) => {
             if (topic == "bed") {
                 console.log('(3) Received Message, Bytes => String => Data_Structure see followings,')
-                console.log(message)
-                console.log(message.toString())
                 const data = JSON.parse(message.toString());
-                console.log(data)
-                console.log(data.pts_center)
                 updateRoomLayout(data.pts_center);
                 jb_show_message(data);
+                updateRoomTitle(data.location);  // Update the title based on location
             }
         });     
 
@@ -176,7 +173,6 @@
         
             locations.forEach(coord => {
                 const [x, y] = coord;
-                // by CLICK tool for 34 371 etc
                 const x_px = jb_map(x, x_min, x_max, 34, 371);
                 const y_px = jb_map(y, y_min, y_max, 290, 38);
         
@@ -184,8 +180,6 @@
                 dot.className = "dot";
                 dot.style.left = `${x_px - dotSize / 2}px`;
                 dot.style.top = `${y_px - dotSize / 2}px`;
-        
-                console.log(`\"loc_px\": [${Math.round(x_px)}, ${Math.round(y_px)}], \"x, y\": [${x}, ${y}]`);
         
                 overlay.appendChild(dot);
             });
@@ -238,6 +232,12 @@
             document.getElementById("click-info").innerText = `Clicked Coordinates: x_px_exp = ${Math.round(x)}, y_px_exp = ${Math.round(y)}`;
         });
 
+        // (4.7) function to update room title
+        function updateRoomTitle(location) {
+            const titleElement = document.getElementById("room-title");
+            titleElement.innerText = `Room Bed Layout (${location || 'in JB office'})`;
+        }
+
         // (5) on “error” case
         client.on("error", (error) => {
             console.error("Connection Error:", error);
@@ -252,3 +252,4 @@
 
 </body>
 </html>
+ 
