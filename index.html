@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,9 +9,9 @@
         body { font-family: Arial, sans-serif; }
         #status { margin-bottom: 10px; font-weight: bold; }
         #roomLayout {
-            position: relative;
-            width: 400px;
-            height: 400px;
+            position: absolute;
+            width: 321px;
+            height: 251px;
             border: 2px solid #333;
             background-color: #f0f0f0;
         }
@@ -53,10 +53,10 @@
 </head>
 <body>
 
-    <h2>Room Layout Dashboard V01.54</h2>
+    <!-- Alert: changed Version when edited -->
+    <h2>Joybien Technologies DASHBOARD V01.55</h2>
+    
     <p id="status">Status: Disconnected</p>
-
-    <div id="roomLayout"></div>
 
     <!-- Room Bed Layout -->    
     <h2>Room Bed Layout</h2>
@@ -67,81 +67,78 @@
 
     <script>
         // (1) Connect to the MQTT broker
+        console.log("(1) Connect to wss://59.124.7.95/mqtt");
         const client = mqtt.connect("wss://59.124.7.95/mqtt");
+        console.log("(1) OK! Connected");
 
         // (2) Connection status updates
         client.on("connect", () => {
             document.getElementById("status").innerText = "Status: Connected";
             client.subscribe("bed", (err) => {
                 if (!err) {
-                    console.log("Subscribed to topic: bed");
+                    console.log("(2) Subscribed to topic: bed");
+                    console.log("(2) OK! Subscribed");
                 } else {
-                    console.error("Subscription error:", err);
+                    console.error("(2_error) Subscription error:", err);
                 }
             });
         });
 
-        // (3) on “error” case
-        client.on("error", (error) => {
-            console.error("Connection Error:", error);
-            document.getElementById("status").innerText = "Status: Connection Error";
-        });
-
-        // (4) on “close” case
-        client.on("close", () => {
-            document.getElementById("status").innerText = "Status: Disconnected";
-        });
-
-        // (5) on “message” case
-        // Handle incoming messages and display on layout
+        // (3) on “message” case
         client.on("message", (topic, message) => {
-            if (topic === "bed") {
+            if (topic == "bed") {
+                console.log('(3) Reveived Message, Bytes => String => Data_Structure see followings,')
+                console.log(message)
+                console.log(message.toString())
                 const data = JSON.parse(message.toString());
+                console.log(data)
+                console.log(data.pts_center)
                 updateRoomLayout(data.pts_center);
                 jb_show_state(data.state);
             }
-        });
+        });     
 
-        // (6) on “update layout by x y ” case
-
-        // Function to update the room layout with new coordinates
-        function updateRoomLayout(locations) {
-            const overlay = document.getElementById("overlay");
-            overlay.innerHTML = ''; // Clear previous dots
-
-            // Define real-world coordinate bounds
-            const x_min = -2, x_max = 2;  // Real-world x range
-            const y_min = 0, y_max = 4;   // Real-world y range
-
-            // Force overlay to match image dimensions
-            overlay.style.width = "321px";
-            overlay.style.height = "251px";
-
-            const dotSize = 10; // Size of the dot
-
-            locations.forEach(coord => {
-                const [x, y] = coord;
-
-                // Convert real-world coordinates to pixel coordinates
-                const x_px = jb_map(x, x_min, x_max, 0, 321);
-                const y_px = jb_map(y, y_min, y_max, 251, 0);
-
-                // Create and position the dot, adjusting for dot size
-                const dot = document.createElement("div");
-                dot.className = "dot";
-                dot.style.left = `${x_px - dotSize / 2}px`;
-                dot.style.top = `${y_px - dotSize / 2}px`;
-
-                overlay.appendChild(dot);
-            });
-        }
-
-        // Simple map function
+        // (4.1) simple map function
         function jb_map(x, x1, x2, y1, y2) {
             return (y2 - y1) / (x2 - x1) * (x - x1) + y1; 
         }
 
-        // Function to show state in the center of the room layout
+        // (4.2) updateRoomLayout function
+        function updateRoomLayout(locations) {
+            const overlay = document.getElementById("overlay");
+            overlay.innerHTML = ''; // Clear previous dots
+        
+            // Define real-world coordinate bounds
+            const x_min = -2, x_max = 2;  // Real-world x range
+            const y_min = 0, y_max = 4;   // Real-world y range
+        
+            // Force overlay to match image dimensions
+            overlay.style.width = "321px";
+            overlay.style.height = "251px";
+        
+            const dotSize = 10; // Size of the dot
+        
+            locations.forEach(coord => {
+                const [x, y] = coord;
+        
+                // Convert real-world coordinates to pixel coordinates
+                const x_px = jb_map(x, x_min, x_max, 0, 400);
+                const y_px = jb_map(y, y_min, y_max, 320, 0);
+        
+                // Create and position the dot, adjusting for dot size
+                const dot = document.createElement("div");
+                dot.className = "dot";
+                dot.style.left = `${x_px - dotSize / 2}px`;  // Center the dot horizontally
+                dot.style.top = `${y_px - dotSize / 2}px`;   // Center the dot vertically
+        
+                // Log for debugging
+                console.log(`\"loc_px\": [${Math.round(x_px)}, ${Math.round(y_px)}], \"x, y\": [${x}, ${y}]`);
+        
+                overlay.appendChild(dot);
+            });
+        }
+
+        // (4.3) Function to show state in the center of the room layout
         function jb_show_state(state) {
             const overlay = document.getElementById("overlay");
             const stateLabel = document.createElement("div");
@@ -154,7 +151,19 @@
 
             overlay.appendChild(stateLabel);
         }
+
+        // (5) on “error” case
+        client.on("error", (error) => {
+            console.error("Connection Error:", error);
+            document.getElementById("status").innerText = "Status: Connection Error";
+        });
+
+        // (6) on “close” case
+        client.on("close", () => {
+            document.getElementById("status").innerText = "Status: Disconnected";
+        });
     </script>
 
 </body>
 </html>
+ 
