@@ -45,7 +45,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>Joybien Technologies DASHBOARD V01.41</h2>
+    <h2>Joybien Technologies DASHBOARD V01.42</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -88,12 +88,8 @@
                 console.log(data.pts_center)
                 updateRoomLayout(data.pts_center);
             }
-        });
-
-        function jb_map(x, x1, x2, y1, y2) {
-           
-
-            
+        });     
+        
         // (3) on “update layout by x y ” case
         // Function to update the room layout with new coordinates
         function updateRoomLayout(locations) {
@@ -120,21 +116,18 @@
                 console.log(`\"loc_px\": [${Math.round(x_px)}, ${Math.round(y_px)}], \"x, y\": [${Math.round(x)}, ${Math.round(y)}]`);
                 overlay.appendChild(dot);
             });
-
-            // (5) on “error” case
-            client.on("error", (error) => {
-                console.error("Connection Error:", error);
-                document.getElementById("status").innerText = "Status: Connection Error";
-            });
-    
-            // (6) on “close” case
-            client.on("close", () => {
-                document.getElementById("status").innerText = "Status: Disconnected";
-            });
-
-            
-            
         }
+            
+        // (5) on “error” case
+        client.on("error", (error) => {
+            console.error("Connection Error:", error);
+            document.getElementById("status").innerText = "Status: Connection Error";
+        });
+
+        // (6) on “close” case
+        client.on("close", () => {
+            document.getElementById("status").innerText = "Status: Disconnected";
+        });
     </script>
 
 </body>
