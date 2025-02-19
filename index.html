@@ -101,7 +101,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBOARD V01.72</h2>
+    <h2>BED DASHBOARD V01.74 (A365)</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -177,6 +177,14 @@
                 const y_px = jb_map(y, y_min, y_max, 290, 38);
                 const dot = document.createElement("div");
                 dot.className = "dot";
+
+                // ✅ Change color based on state
+                if (state === "EPY") {
+                    dot.style.backgroundColor = "white"; // Set to WHITE if EPY
+                } else {
+                    dot.style.backgroundColor = "red";   // Default RED otherwise
+                }
+                
                 dot.style.left = `${x_px - dotSize / 2}px`;
                 dot.style.top = `${y_px - dotSize / 2}px`;       
                 overlay.appendChild(dot);      
