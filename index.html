@@ -101,7 +101,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBOARD V01.74 (A365)</h2>
+    <h2>BED DASHBOARD V01.75 (A365)</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -123,139 +123,145 @@
         <button id="test-button" onclick="jb_pub_test_message()">TEST</button>
     </div>
 
-    <script>
-        // (1) Connect to the MQTT broker
-        console.log("(1) Connect to wss://59.124.7.95/mqtt");
-        const client = mqtt.connect("wss://59.124.7.95/mqtt");
-        console.log("(1) OK! Connected");
 
-        // (2) Connection status updates
-        client.on("connect", () => {
-            document.getElementById("status").innerText = "Status: Connected";
-            client.subscribe("bed", (err) => {
-                if (!err) {
-                    console.log("(2) Subscribed to topic: bed");
-                    console.log("(2) OK! Subscribed");
-                } else {
-                    console.error("(2_error) Subscription error:", err);
-                }
-            });
-        });
+    
+   
 
-        // (3) on “message” case
-        client.on("message", (topic, message) => {
-            if (topic == "bed") {
-                console.log('(3) Received Message, Bytes => String => Data_Structure see followings,')
-                const data = JSON.parse(message.toString());
-                updateRoomLayout(data.pts_center);
-                jb_show_message(data);
-                updateRoomTitle(data.location);  // Update the title based on location
+<script>
+    // (1) Connect to the MQTT broker
+    console.log("(1) Connect to wss://59.124.7.95/mqtt");
+    const client = mqtt.connect("wss://59.124.7.95/mqtt");
+    console.log("(1) OK! Connected");
+
+    // (2) Connection status updates
+    client.on("connect", () => {
+        document.getElementById("status").innerText = "Status: Connected";
+        client.subscribe("bed", (err) => {
+            if (!err) {
+                console.log("(2) Subscribed to topic: bed");
+                console.log("(2) OK! Subscribed");
+            } else {
+                console.error("(2_error) Subscription error:", err);
             }
-        });     
+        });
+    });
 
-        // (4.1) function for jb_map()
-        function jb_map(x, x1, x2, y1, y2) {
-            return (y2 - y1) / (x2 - x1) * (x - x1) + y1; 
-        }
-
-        // (4.2) function for updateRoomLayout()
-        function updateRoomLayout(locations) {
-            const overlay = document.getElementById("overlay");
-            overlay.innerHTML = ''; // Clear previous dots
-        
-            const x_min = -2, x_max = 2;
-            const y_min = 0, y_max = 4;
-        
-            overlay.style.width = "321px";
-            overlay.style.height = "251px";
-        
-            const dotSize = 50; // Increased dot size
-        
-            locations.forEach(coord => {
-                const [x, y] = coord;
-                const x_px = jb_map(x, x_min, x_max, 34, 371);
-                const y_px = jb_map(y, y_min, y_max, 290, 38);
-                const dot = document.createElement("div");
-                dot.className = "dot";
-
-                // ✅ Change color based on state
-                if (state === "EPY") {
-                    dot.style.backgroundColor = "white"; // Set to WHITE if EPY
-                } else {
-                    dot.style.backgroundColor = "red";   // Default RED otherwise
-                }
-                
-                dot.style.left = `${x_px - dotSize / 2}px`;
-                dot.style.top = `${y_px - dotSize / 2}px`;       
-                overlay.appendChild(dot);      
-            });
-        }
-
-        // (4.4) function for jb_show_message()
-        function jb_show_message(data) {
-            const overlay = document.getElementById("overlay");
-            const messageBox = document.createElement("div");
-            messageBox.className = "message-box";
-
-            const table = document.createElement("table");
+    // (3) on “message” case
+    client.on("message", (topic, message) => {
+        if (topic == "bed") {
+            console.log('(3) Received Message, Bytes => String => Data_Structure see followings,');
+            const data = JSON.parse(message.toString());
             
-            for (const [key, value] of Object.entries(data)) {
-                const row = document.createElement("tr");
-                const keyCell = document.createElement("td");
-                const valueCell = document.createElement("td");
+            // Pass state to updateRoomLayout
+            updateRoomLayout(data.pts_center, data.state);
+            jb_show_message(data);
+            updateRoomTitle(data.location); // Update the title based on location
+        }
+    });     
 
-                keyCell.innerText = key;
-                valueCell.innerText = Array.isArray(value) ? value.join(", ") : value;
+    // (4.1) function for jb_map()
+    function jb_map(x, x1, x2, y1, y2) {
+        return (y2 - y1) / (x2 - x1) * (x - x1) + y1; 
+    }
 
-                row.appendChild(keyCell);
-                row.appendChild(valueCell);
-                table.appendChild(row);
+    // (4.2) function for updateRoomLayout() with state check
+    function updateRoomLayout(locations, state) {
+        const overlay = document.getElementById("overlay");
+        overlay.innerHTML = ''; // Clear previous dots
+
+        const x_min = -2, x_max = 2;
+        const y_min = 0, y_max = 4;
+
+        overlay.style.width = "321px";
+        overlay.style.height = "251px";
+
+        const dotSize = 50; // Dot size
+
+        locations.forEach(coord => {
+            const [x, y] = coord;
+            const x_px = jb_map(x, x_min, x_max, 34, 371);
+            const y_px = jb_map(y, y_min, y_max, 290, 38);
+
+            const dot = document.createElement("div");
+            dot.className = "dot";
+
+            // ✅ Change color based on state
+            if (state === "EPY") {
+                dot.style.backgroundColor = "white"; // Set to WHITE if EPY
+            } else {
+                dot.style.backgroundColor = "red";   // Default RED otherwise
             }
 
-            messageBox.appendChild(table);
-            overlay.appendChild(messageBox);
+            dot.style.left = `${x_px - dotSize / 2}px`;
+            dot.style.top = `${y_px - dotSize / 2}px`;
+            overlay.appendChild(dot);
+        });
+    }
+
+    // (4.4) function for jb_show_message()
+    function jb_show_message(data) {
+        const overlay = document.getElementById("overlay");
+        const messageBox = document.createElement("div");
+        messageBox.className = "message-box";
+
+        const table = document.createElement("table");
+
+        for (const [key, value] of Object.entries(data)) {
+            const row = document.createElement("tr");
+            const keyCell = document.createElement("td");
+            const valueCell = document.createElement("td");
+
+            keyCell.innerText = key;
+            valueCell.innerText = Array.isArray(value) ? value.join(", ") : value;
+
+            row.appendChild(keyCell);
+            row.appendChild(valueCell);
+            table.appendChild(row);
         }
 
-        // (4.5) function for jb_put_test_message()
-        function jb_pub_test_message() {
-            const messageField = document.getElementById("test-message");
-            const message = messageField.value;
-            try {
-                const parsedMessage = JSON.parse(message);
-                client.publish("bed", JSON.stringify(parsedMessage));
-                console.log("(TEST) Published message:", parsedMessage);
-            } catch (error) {
-                console.error("Invalid JSON format:", error);
-            }
+        messageBox.appendChild(table);
+        overlay.appendChild(messageBox);
+    }
+
+    // (4.5) function for jb_put_test_message()
+    function jb_pub_test_message() {
+        const messageField = document.getElementById("test-message");
+        const message = messageField.value;
+        try {
+            const parsedMessage = JSON.parse(message);
+            client.publish("bed", JSON.stringify(parsedMessage));
+            console.log("(TEST) Published message:", parsedMessage);
+        } catch (error) {
+            console.error("Invalid JSON format:", error);
         }
+    }
 
-        // (4.6) Click event to display coordinates
-        document.getElementById("overlay").addEventListener("click", function(event) {
-            const rect = this.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
+    // (4.6) Click event to display coordinates
+    document.getElementById("overlay").addEventListener("click", function(event) {
+        const rect = this.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
 
-            document.getElementById("click-info").innerText = `Clicked Coordinates: x_px_exp = ${Math.round(x)}, y_px_exp = ${Math.round(y)}`;
-        });
+        document.getElementById("click-info").innerText = `Clicked Coordinates: x_px_exp = ${Math.round(x)}, y_px_exp = ${Math.round(y)}`;
+    });
 
-        // (4.7) function to update room title
-        function updateRoomTitle(location) {
-            const titleElement = document.getElementById("room-title");
-            titleElement.innerText = `Room Bed Layout (${location || 'in JB office'})`;
-        }
+    // (4.7) function to update room title
+    function updateRoomTitle(location) {
+        const titleElement = document.getElementById("room-title");
+        titleElement.innerText = `Room Bed Layout (${location || 'in JB office'})`;
+    }
 
-        // (5) on “error” case
-        client.on("error", (error) => {
-            console.error("Connection Error:", error);
-            document.getElementById("status").innerText = "Status: Connection Error";
-        });
+    // (5) on “error” case
+    client.on("error", (error) => {
+        console.error("Connection Error:", error);
+        document.getElementById("status").innerText = "Status: Connection Error";
+    });
 
-        // (6) on “close” case
-        client.on("close", () => {
-            document.getElementById("status").innerText = "Status: Disconnected";
-        });
-    </script>
-
+    // (6) on “close” case
+    client.on("close", () => {
+        document.getElementById("status").innerText = "Status: Disconnected";
+    });
+</script>
 </body>
 </html>
  
