@@ -101,7 +101,7 @@
 <body>
 
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBOARD V01.75 (A365)</h2>
+    <h2>BED DASHBOARD V01.76 (A365)</h2>
     
     <p id="status">Status: Disconnected</p>
 
@@ -186,7 +186,7 @@
             dot.className = "dot";
 
             // ✅ Change color based on state
-            if (state === "EPY") {
+            if (state === "EPY" || (x === 0 && y === 0) ) {
                 dot.style.backgroundColor = "white"; // Set to WHITE if EPY
             } else {
                 dot.style.backgroundColor = "red";   // Default RED otherwise
