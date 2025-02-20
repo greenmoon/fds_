@@ -8,7 +8,6 @@
     <style>
         body { font-family: Arial, sans-serif; }
         #status { margin-bottom: 10px; font-weight: bold; }
- 
         .dot {
             position: absolute;
             width: 20px;
@@ -16,8 +15,6 @@
             background-color: red;
             border-radius: 50%;
         }
- 
-
         #room-container {
             position: relative;
             width: 400px;
@@ -26,7 +23,6 @@
             border: 2px solid #333;
             overflow: hidden; /* Prevent dots from going outside */
         }
-        
         #room-layout {
             width: 100%;  /* Fill container */
             height: 100%; /* Maintain size */
@@ -101,7 +97,7 @@
 <body>
     <!-- -------------------------------------------------------------------- -->
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBORD A365_V01.97</h2>
+    <h2>BED DASHBORD A365_V01.98</h2>
     <!-- -------------------------------------------------------------------- -->
     
     <p id="status">Status: Disconnected</p>
@@ -158,6 +154,9 @@
         }
     });     
 
+    //========================================
+    //* FUNCTION
+    //========================================
     // (4.1) function for jb_map()
     function jb_map(x, x1, x2, y1, y2) {
         return (y2 - y1) / (x2 - x1) * (x - x1) + y1; 
@@ -176,13 +175,9 @@
         const dotSize = 50;
     
         locations.forEach((coord, index) => {
-            let [x_axis, ,z_axis] = coord; // coord [x y z] extract [x z] only 
-             
+            let [x_axis, ,z_axis] = coord; // coord [x y z] extract [x z] only  
             x = x_axis;
-            y = z_axis; // Alert: map to x y should rewrite as z later
-            
-            //let x_px = jb_map(x, x_min, x_max, 12, 393);
-            //let y_px = jb_map(y, y_min, y_max, 394, 10);
+            y = z_axis; // Alert: map to z-axis as y
             let x_px = jb_map(x, x_min, x_max, 0, 400);
             let y_px = jb_map(y, y_min, y_max, 400, 0);
     
@@ -209,20 +204,15 @@
             }
     
             // ✅ Position the dot
-            //dot.style.left = `${x_px - dotSize / 2}px`;
-            //dot.style.top = `${y_px - dotSize / 2}px`;
-            //overlay.appendChild(dot);
-
             // Debugging
             console.log(`Mapped (x, y): (${x}, ${y}) → (x_px, y_px): (${x_px}, ${y_px})`);
-        
-           
+   
             dot.className = "dot";
-            dot.style.left = `${x_px - 10}px`; // Center dot horizontally
-            dot.style.top = `${y_px - 10}px`;  // Center dot vertically
-        
-            overlay.appendChild(dot);
-            
+            //dot.style.left = `${x_px - 10}px`; // Center dot horizontally
+            //dot.style.top = `${y_px - 10}px`;  // Center dot vertically      
+            dot.style.left = `${x_px - 1}px`; // Center dot horizontally
+            dot.style.top = `${y_px - 1}px`;  // Center dot vertically      
+            overlay.appendChild(dot);         
         });
     }
     
