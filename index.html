@@ -10,8 +10,8 @@
         #status { margin-bottom: 10px; font-weight: bold; }
         .dot {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 10px;
+            height: 10px;
             background-color: red;
             border-radius: 50%;
         }
@@ -28,7 +28,6 @@
             height: 100%; /* Maintain size */
             object-fit: cover; /* Ensure full coverage */
         }
-
         #overlay {
             position: absolute;
             top: 0;
@@ -97,7 +96,7 @@
 <body>
     <!-- -------------------------------------------------------------------- -->
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBORD A365_V02.01</h2>
+    <h2>BED DASHBORD A365_V02.02</h2>
     <!-- -------------------------------------------------------------------- -->
     
     <p id="status">Status: Disconnected</p>
@@ -222,7 +221,7 @@
     //* (4.3) jb_point_cloud_show_as_comet_tail()
     // ✅ Global Variables
     let pointCloudHistory = [];  // Circular buffer for history
-    const MAX_HISTORY_LENGTH = 125;  // Length of comet tail
+    const MAX_HISTORY_LENGTH = 38; // keep near 3 sec  // Length of comet tail
     
     function jb_point_cloud_show_as_comet_tail(locations, state) {
         const overlay = document.getElementById("overlay");
