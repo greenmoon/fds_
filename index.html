@@ -101,7 +101,7 @@
 <body>
     <!-- -------------------------------------------------------------------- -->
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBORD A365_V01.96</h2>
+    <h2>BED DASHBORD A365_V01.97</h2>
     <!-- -------------------------------------------------------------------- -->
     
     <p id="status">Status: Disconnected</p>
@@ -176,10 +176,10 @@
         const dotSize = 50;
     
         locations.forEach((coord, index) => {
-            let [x_axis, ,z_axis] = coord; // coord [x y z] extract [x z] for new x-axis and y-axis(for easy to exaplain to)
+            let [x_axis, ,z_axis] = coord; // coord [x y z] extract [x z] only 
              
-            x = x_axis
-            y = z_axis
+            x = x_axis;
+            y = z_axis; // Alert: map to x y should rewrite as z later
             
             //let x_px = jb_map(x, x_min, x_max, 12, 393);
             //let y_px = jb_map(y, y_min, y_max, 394, 10);
