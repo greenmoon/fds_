@@ -165,7 +165,53 @@
     }
 
     // (4.2) function for updateRoomLayout() with state check
+    // ✅ Global variable declared outside of functions
+    let previousCoords = {}; 
+    
     function updateRoomLayout(locations, state) {
+        const overlay = document.getElementById("overlay");
+        overlay.innerHTML = ''; // Clear previous dots
+    
+        const x_min = -2, x_max = 2;
+        const y_min = 0, y_max = 4;
+        const dotSize = 50;
+    
+        locations.forEach((coord, index) => {
+            let [x, y] = coord;
+            let x_px = jb_map(x, x_min, x_max, 34, 371);
+            let y_px = jb_map(y, y_min, y_max, 290, 38);
+    
+            // ✅ Initialize previous coordinates if not present
+            if (!previousCoords[index]) {
+                previousCoords[index] = { x: x_px, y: y_px };
+            }
+    
+            const dot = document.createElement("div");
+            dot.className = "dot";
+    
+            // ✅ Apply color and position logic
+            if (state === "EPY" || (x === 0 && y === 0 && state === "EPY")) {
+                dot.style.backgroundColor = "white"; // WHITE if EPY or (0,0) with EPY
+            } else if (state !== "EPY" && x === 0 && y === 0) {
+                dot.style.backgroundColor = "#ff6666"; // LIGHT RED if (0,0) but not EPY
+                // Retain previous coordinates
+                x_px = previousCoords[index].x;
+                y_px = previousCoords[index].y;
+            } else {
+                dot.style.backgroundColor = "red"; // Default RED
+                // ✅ Update stored previous coordinates
+                previousCoords[index] = { x: x_px, y: y_px };
+            }
+    
+            // ✅ Position the dot
+            dot.style.left = `${x_px - dotSize / 2}px`;
+            dot.style.top = `${y_px - dotSize / 2}px`;
+            overlay.appendChild(dot);
+        });
+    }
+    
+    
+    function xupdateRoomLayout(locations, state) {
         const overlay = document.getElementById("overlay");
         overlay.innerHTML = ''; // Clear previous dots
 
