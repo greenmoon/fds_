@@ -176,7 +176,11 @@
         const dotSize = 50;
     
         locations.forEach((coord, index) => {
-            let [x, y] = coord;
+            let [x_axis, ,z_axis] = coord; // coord [x y z] extract [x z] for new x-axis and y-axis(for easy to exaplain to)
+             
+            x = x_axis
+            y = z_axis
+            
             //let x_px = jb_map(x, x_min, x_max, 12, 393);
             //let y_px = jb_map(y, y_min, y_max, 394, 10);
             let x_px = jb_map(x, x_min, x_max, 0, 400);
