@@ -101,7 +101,7 @@
 <body>
     <!-- -------------------------------------------------------------------- -->
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBORD A365_V01.79</h2>
+    <h2>BED DASHBORD A365_V01.80</h2>
     <!-- -------------------------------------------------------------------- -->
     
     <p id="status">Status: Disconnected</p>
@@ -179,8 +179,8 @@
     
         locations.forEach((coord, index) => {
             let [x, y] = coord;
-            let x_px = jb_map(x, x_min, x_max, 34, 371);
-            let y_px = jb_map(y, y_min, y_max, 290, 38);
+            let x_px = jb_map(x, x_min, x_max, 12, 393);
+            let y_px = jb_map(y, y_min, y_max, 394, 10);
     
             // ✅ Initialize previous coordinates if not present
             if (!previousCoords[index]) {
@@ -211,40 +211,8 @@
         });
     }
     
+    //* (4.3) dummy
     
-    function xupdateRoomLayout(locations, state) {
-        const overlay = document.getElementById("overlay");
-        overlay.innerHTML = ''; // Clear previous dots
-
-        const x_min = -2, x_max = 2;
-        const y_min = 0, y_max = 4;
-
-        overlay.style.width = "321px";
-        overlay.style.height = "251px";
-
-        const dotSize = 50; // Dot size
-
-        locations.forEach(coord => {
-            const [x, y] = coord;
-            const x_px = jb_map(x, x_min, x_max, 12, 393);
-            const y_px = jb_map(y, y_min, y_max, 394, 10);
-
-            const dot = document.createElement("div");
-            dot.className = "dot";
-
-            // ✅ Change color based on state
-            if (state === "EPY" || (x === 0 && y === 0) ) {
-                dot.style.backgroundColor = "white"; // Set to WHITE if EPY
-            } else {
-                dot.style.backgroundColor = "red";   // Default RED otherwise
-            }
-
-            dot.style.left = `${x_px - dotSize / 2}px`;
-            dot.style.top = `${y_px - dotSize / 2}px`;
-            overlay.appendChild(dot);
-        });
-    }
-
     // (4.4) function for jb_show_message()
     function jb_show_message(data) {
         const overlay = document.getElementById("overlay");
