@@ -96,7 +96,7 @@
 <body>
     <!-- -------------------------------------------------------------------- -->
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBORD A365_V02.06</h2>
+    <h2>BED DASHBORD A365_V02.07</h2>
     <!-- -------------------------------------------------------------------- -->
     
     <p id="status">Status: Disconnected</p>
@@ -259,26 +259,30 @@
     
         // ✅ Step 3: Plot points with color gradient
         pointCloudHistory.forEach((coord, index) => {
-            let [x, z] = coord;
+        let [x, z] = coord;
     
-            // Map x and z to canvas pixels
-            let x_px = jb_map(x, x_min, x_max, 0, 400);
-            let y_px = jb_map(z, y_min, y_max, 400, 0);
+        // Map x and z to canvas pixels
+        let x_px = jb_map(x, x_min, x_max, 0, 400);
+        let y_px = jb_map(z, y_min, y_max, 400, 0);
     
-            // ✅ Color Gradient: Newer points are bright red, older are faded
-            let opacity = (index + 1) / MAX_HISTORY_LENGTH; // 0.05 to 1
-            let color = `rgba(255, 0, 0, ${opacity})`;
+        // Color Gradient: Newer points are bright red, older are faded
+        let opacity = (index + 1) / MAX_HISTORY_LENGTH; // 0.05 to 1
+        let color = `rgba(255, 0, 0, ${opacity})`;
     
-            const dot = document.createElement("div");
-            dot.className = "dot";
-            dot.style.left = `${x_px - dotSize / 2}px`;
-            dot.style.top = `${y_px - dotSize / 2}px`;
-            dot.style.width = `${dotSize}px`;
-            dot.style.height = `${dotSize}px`;
-            dot.style.backgroundColor = color;
+        // ✅ Dynamically adjust dot size for comet tail effect
+        let dotSize = 20 + (20 * opacity); // Ranges from 20px to 40px
     
-            overlay.appendChild(dot);
-        });
+        const dot = document.createElement("div");
+        dot.className = "dot";
+        dot.style.left = `${x_px - dotSize / 2}px`;
+        dot.style.top = `${y_px - dotSize / 2}px`;
+        dot.style.width = `${dotSize}px`;
+        dot.style.height = `${dotSize}px`;
+        dot.style.backgroundColor = color;
+    
+        overlay.appendChild(dot);
+    });
+    
     }
 
     function xjb_point_cloud_show_as_comet_tail(locations, state) {
