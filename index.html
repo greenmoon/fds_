@@ -96,7 +96,7 @@
 <body>
     <!-- -------------------------------------------------------------------- -->
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBORD A365_V02.08</h2>
+    <h2>BED DASHBORD A365_V02.09</h2>
     <!-- -------------------------------------------------------------------- -->
     
     <p id="status">Status: Disconnected</p>
@@ -259,63 +259,19 @@
     
         // ✅ Step 3: Plot points with color gradient
         pointCloudHistory.forEach((coord, index) => {
-        let [x, z] = coord;
-    
-        // Map x and z to canvas pixels
-        let x_px = jb_map(x, x_min, x_max, 0, 400);
-        let y_px = jb_map(z, y_min, y_max, 400, 0);
-    
-        // Color Gradient: Newer points are bright red, older are faded
-        let opacity = (index + 1) / MAX_HISTORY_LENGTH; // 0.05 to 1
-        let color = `rgba(255, 0, 0, ${opacity})`;
-    
-        // ✅ Dynamically adjust dot size for comet tail effect
-        let dotSize = 10 + (10 * opacity); // Ranges from 20px to 40px
-    
-        const dot = document.createElement("div");
-        dot.className = "dot";
-        dot.style.left = `${x_px - dotSize / 2}px`;
-        dot.style.top = `${y_px - dotSize / 2}px`;
-        dot.style.width = `${dotSize}px`;
-        dot.style.height = `${dotSize}px`;
-        dot.style.backgroundColor = color;
-    
-        overlay.appendChild(dot);
-    });
-    
-    }
-
-    function xjb_point_cloud_show_as_comet_tail(locations, state) {
-        const overlay = document.getElementById("overlay");
-        overlay.innerHTML = ''; // Clear previous dots
-    
-        const x_min = -2, x_max = 2;
-        const y_min = 0, y_max = 4;
-        const dotSize = 10;  // Size of dots
-    
-        // ✅ Step 1: Add new points to history
-        locations.forEach((coord) => {
-            let [x_axis, , z_axis] = coord; // Extract [x, z]
-            pointCloudHistory.push([x_axis, z_axis]);
-        });
-    
-        // ✅ Step 2: Maintain circular buffer size
-        while (pointCloudHistory.length > MAX_HISTORY_LENGTH) {
-            pointCloudHistory.shift(); // Remove oldest point
-        }
-    
-        // ✅ Step 3: Plot points with color gradient
-        pointCloudHistory.forEach((coord, index) => {
             let [x, z] = coord;
-    
+        
             // Map x and z to canvas pixels
             let x_px = jb_map(x, x_min, x_max, 0, 400);
             let y_px = jb_map(z, y_min, y_max, 400, 0);
-    
-            // ✅ Color Gradient: Newer points are bright red, older are faded
+        
+            // Color Gradient: Newer points are bright red, older are faded
             let opacity = (index + 1) / MAX_HISTORY_LENGTH; // 0.05 to 1
             let color = `rgba(255, 0, 0, ${opacity})`;
-    
+        
+            // ✅ Dynamically adjust dot size for comet tail effect
+            let dotSize = 7 + (7 * opacity); // Ranges from 7px to 14px
+        
             const dot = document.createElement("div");
             dot.className = "dot";
             dot.style.left = `${x_px - dotSize / 2}px`;
@@ -323,9 +279,9 @@
             dot.style.width = `${dotSize}px`;
             dot.style.height = `${dotSize}px`;
             dot.style.backgroundColor = color;
-    
+        
             overlay.appendChild(dot);
-        });
+        });  
     }
     
     // (4.4) function for jb_show_message()
