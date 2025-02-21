@@ -96,7 +96,7 @@
 <body>
     <!-- -------------------------------------------------------------------- -->
     <!-- Alert: changed Version when edited -->
-    <h2>BED DASHBORD A365_V02.05</h2>
+    <h2>BED DASHBORD A365_V02.06</h2>
     <!-- -------------------------------------------------------------------- -->
     
     <p id="status">Status: Disconnected</p>
@@ -220,10 +220,68 @@
     
     //* (4.3) jb_point_cloud_show_as_comet_tail()
     // ✅ Global Variables
+    //let pointCloudHistory = [];  // Circular buffer for history
+    //const MAX_HISTORY_LENGTH = 20; // keep near  sec  // Length of comet tail
+    // ✅ Global Variables
     let pointCloudHistory = [];  // Circular buffer for history
-    const MAX_HISTORY_LENGTH = 20; // keep near  sec  // Length of comet tail
+    const MAX_HISTORY_LENGTH = 20; // Length of comet tail
+    let lastValidCoords = {};    // To store last valid positions per point
     
     function jb_point_cloud_show_as_comet_tail(locations, state) {
+        const overlay = document.getElementById("overlay");
+        overlay.innerHTML = ''; // Clear previous dots
+    
+        const x_min = -2, x_max = 2;
+        const y_min = 0, y_max = 4;
+        const dotSize = 10;  // Size of dots
+    
+        // ✅ Step 1: Add new points to history
+        locations.forEach((coord, index) => {
+            let [x_axis, , z_axis] = coord; // Extract [x, z]
+    
+            // ✅ If x=0 and y=0 but state is not EPY, use last valid position
+            if (x_axis === 0 && z_axis === 0 && state !== "EPY") {
+                if (lastValidCoords[index]) {
+                    [x_axis, z_axis] = lastValidCoords[index];
+                }
+            } else {
+                // ✅ Store last valid coordinates
+                lastValidCoords[index] = [x_axis, z_axis];
+            }
+    
+            pointCloudHistory.push([x_axis, z_axis]);
+        });
+    
+        // ✅ Step 2: Maintain circular buffer size
+        while (pointCloudHistory.length > MAX_HISTORY_LENGTH) {
+            pointCloudHistory.shift(); // Remove oldest point
+        }
+    
+        // ✅ Step 3: Plot points with color gradient
+        pointCloudHistory.forEach((coord, index) => {
+            let [x, z] = coord;
+    
+            // Map x and z to canvas pixels
+            let x_px = jb_map(x, x_min, x_max, 0, 400);
+            let y_px = jb_map(z, y_min, y_max, 400, 0);
+    
+            // ✅ Color Gradient: Newer points are bright red, older are faded
+            let opacity = (index + 1) / MAX_HISTORY_LENGTH; // 0.05 to 1
+            let color = `rgba(255, 0, 0, ${opacity})`;
+    
+            const dot = document.createElement("div");
+            dot.className = "dot";
+            dot.style.left = `${x_px - dotSize / 2}px`;
+            dot.style.top = `${y_px - dotSize / 2}px`;
+            dot.style.width = `${dotSize}px`;
+            dot.style.height = `${dotSize}px`;
+            dot.style.backgroundColor = color;
+    
+            overlay.appendChild(dot);
+        });
+    }
+
+    function xjb_point_cloud_show_as_comet_tail(locations, state) {
         const overlay = document.getElementById("overlay");
         overlay.innerHTML = ''; // Clear previous dots
     
